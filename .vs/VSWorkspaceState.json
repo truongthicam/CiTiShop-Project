@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\sessions",
+    "\\src\\hooks",
+    "\\src\\interfaces",
+    "\\src\\pages",
+    "\\src\\pages\\address",
+    "\\src\\pages\\orders",
+    "\\src\\pages\\profile"
+  ],
+  "SelectedNode": "\\src\\components\\Card.tsx",
+  "PreviewInSolutionExplorer": false
+}
