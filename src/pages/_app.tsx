@@ -1,7 +1,10 @@
+import IconButton from "@component/buttons/IconButton";
+import Container from "@component/Container";
+import Icon from "@component/icon/Icon";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import MessengerCustomerChat from 'react-messenger-customer-chat';
 import { ThemeProvider } from "styled-components";
 import { AppProvider } from "../contexts/app/AppContext";
@@ -17,6 +20,8 @@ Router.events.on("routeChangeError", () => NProgress.done());
 NProgress.configure({ showSpinner: false });
 const App = ({ Component, pageProps }: any) => {
   let Layout = Component.layout || Fragment;
+
+  const [showChat, setShowChat] = useState(false);
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,6 +66,18 @@ const App = ({ Component, pageProps }: any) => {
           pageId="893789904104597"
         />
         </Layout>
+
+        {/* WebChat Container with show/close button */}
+        <Container style={{ margin: 0, top: 'auto', right: 20, bottom: 20, left: 'auto', position: 'fixed', }}>
+          <IconButton style={{ backgroundColor: 'paleturquoise' }} onClick={() => setShowChat(!showChat)}>
+            {showChat === true ? <Icon children='close'></Icon> : <Icon children='10165-icon-service-Bot-Services'></Icon>}
+          </IconButton>
+          {showChat &&
+            <iframe src='https://webchat.botframework.com/embed/CitishopBot?s=tW0PKSWb2JA.g82xzi7vTGHlP6f2ZH5BLqly0qkz7FUVnctwt-aPg0o'
+              style={{ minWidth: 400, width: '100%', minHeight: '400px', }}>
+            </iframe>}
+        </Container>
+
       </AppProvider>
     </ThemeProvider>
   );
