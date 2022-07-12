@@ -49,6 +49,7 @@ export type CreateInvoiceDto = {
   totalCost: number;
   totalFee: number;
   discount: number;
+  returnUrl: string;
 }
 
 export type InvoiceDto = {

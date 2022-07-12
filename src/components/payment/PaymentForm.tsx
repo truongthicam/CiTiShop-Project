@@ -67,6 +67,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
     let invoiceStr = localStorage.getItem('CreateInvoice');
     if (invoiceStr) {
       let invoiceJson: CreateInvoiceDto = JSON.parse(invoiceStr);
+      const currentUrl = new URL(window.location.href);
       let values: CreateInvoiceDto = {
         // 1. /cart
         cartItems: cartList.map((item) => { return { productId: item.id, quantity: item.qty } }),
@@ -82,6 +83,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
         totalCost: getTotalPrice(),
         totalFee: 40000,
         discount: 40000,
+        returnUrl: new URL(currentUrl.pathname, currentUrl.origin).href,
       };
       // console.log(values);
       let response = await fetch(new URL("/api/Invoice/", apiEndpoint), {
