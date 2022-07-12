@@ -18,7 +18,7 @@ const AccountSettings = () => {
 
   return (
     <div>
-      <DashboardPageHeader title="Account" iconName="settings_filled" />
+      <DashboardPageHeader title="Thông tin tài khoản" iconName="settings_filled" />
 
       <Card1 p="24px 30px">
         <Box

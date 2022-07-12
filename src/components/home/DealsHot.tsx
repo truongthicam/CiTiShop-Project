@@ -20,7 +20,7 @@ const DealsHot: React.FC = () => {
     <CategorySectionCreator
       iconName="light"
       title="Deals Hot"
-      seeMoreLink="#" 
+      seeMoreLink="product/hotdeals/listproduct" 
     >
       <Box mt="-0.25rem" mb="-0.25rem">
         <Carousel totalSlides={10} visibleSlides={visibleSlides}>

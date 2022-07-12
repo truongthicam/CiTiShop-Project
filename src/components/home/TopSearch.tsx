@@ -20,7 +20,7 @@ const TopSearch: React.FC = () => {
     <CategorySectionCreator
       iconName="categories"
       title="Tìm kiếm nhiều nhất"
-      seeMoreLink="#"
+      seeMoreLink="/sale-page"
     >
       <Carousel totalSlides={5} visibleSlides={visibleSlides}>
         {categoryList.map((item, ind) => (
@@ -45,31 +45,31 @@ const categoryList = [
   {
     title: "Son",
     subtitle: "985 sản phẩm",
-    categoryUrl: "/",
+    categoryUrl: "/sale-page",
     imgUrl: "/assets/images/products/son.jpg",
   },
   {
     title: "Mặt nạ",
     subtitle: "300 sản phẩm",
-    categoryUrl: "/",
+    categoryUrl: "/sale-page",
     imgUrl: "/assets/images/products/matna.jpg",
   },
   {
     title: "Serum",
     subtitle: "201 sản phẩm",
-    categoryUrl: "/",
+    categoryUrl: "/sale-page",
     imgUrl: "/assets/images/products/serum.jpg",
   },
   {
     title: "Kem chống nắng",
     subtitle: "356 sản phẩm",
-    categoryUrl: "/",
+    categoryUrl: "/sale-page",
     imgUrl: "/assets/images/products/kemchongnang.jpg",
   },
   {
     title: "Sữa rửa mặt",
     subtitle: "502 sản phẩm",
-    categoryUrl: "/",
+    categoryUrl: "/sale-page",
     imgUrl: "/assets/images/products/suaruamat.jpg",
   },
 ];

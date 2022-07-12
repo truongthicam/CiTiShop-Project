@@ -15,7 +15,7 @@ import { H5, Paragraph } from "@component/Typography";
 import { useCallback, useState } from "react";
 import useWindowSize from "../../../hooks/useWindowSize";
 
-const ProductSearchResult = () => {
+const ListProduct = () => {
   const [view, setView] = useState("grid");
   const width = useWindowSize();
   const isTablet = width < 1025;
@@ -39,8 +39,8 @@ const ProductSearchResult = () => {
         as={Card}
       >
         <div>
-          <H5>Tìm kiếm “ ... ”</H5>
-          <Paragraph color="text.muted">48 kết quả được tìm thấy</Paragraph>
+          <H5>SẢN PHẨM DEALS HOT</H5>
+          
         </div>
         <FlexBox alignItems="center" flexWrap="wrap">
           <Paragraph color="text.muted" mr="1rem">
@@ -111,6 +111,6 @@ const sortOptions = [
   { label: "Giá cao", value: "Giá cao" },
 ];
 
-ProductSearchResult.layout = NavbarLayout;
+ListProduct.layout = NavbarLayout;
 
-export default ProductSearchResult;
+export default ListProduct;
