@@ -4,8 +4,26 @@ import Grid from "@component/grid/Grid";
 import AdminDashboardLayout from "@component/layout/AdminDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import Typography, { H1, H5, Paragraph } from "@component/Typography";
+import { UserDto } from "@utils/apiTypes";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const AdminDashboard = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    const userJson = localStorage.getItem('User');
+    if (!userJson) {
+      router.replace("/403");
+    } else {
+      let userDto: UserDto = JSON.parse(userJson);
+      if (!userDto.isAdmin) {
+        router.replace("/403");
+      }
+    }
+  }, []);
+
   return (
     <div>
       <DashboardPageHeader title="Tổng quan" iconName="bag_filled" />
@@ -32,7 +50,7 @@ const AdminDashboard = () => {
           </Card>
         </Grid>
 
-       
+
       </Grid>
     </div>
   );
@@ -54,7 +72,7 @@ const cardList = [
     amount: "15",
     subtitle: "",
   },
-  
+
   {
     title: "Đơn hàng đã đặt",
     amount: "08",
@@ -70,7 +88,7 @@ const cardList = [
     amount: "02",
     subtitle: "",
   },
-  
+
 ];
 
 

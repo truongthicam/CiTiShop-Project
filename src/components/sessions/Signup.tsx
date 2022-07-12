@@ -1,3 +1,5 @@
+import Spinner from "@component/Spinner";
+import { apiEndpoint } from "@utils/constants";
 import { useFormik } from "formik";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -14,6 +16,7 @@ import { H3, H5, H6, SemiSpan, Small, Span } from "../Typography";
 import { StyledSessionCard } from "./SessionStyle";
 
 const Signup: React.FC = () => {
+  const [buttonDisable, setButtonDisable] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -21,13 +24,39 @@ const Signup: React.FC = () => {
   };
 
   const handleFormSubmit = async (values) => {
-    console.log(values);
+    setButtonDisable(true);
+    let response = await fetch(new URL("/api/User/Register", apiEndpoint), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(values),
+    });
+    // console.log(response);
+    let data = await response.json();
+    // console.log(data);
+    if (response.ok) {
+      alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận');
+    } else {
+      // console.log(data);
+      let errors = Array(...data);
+      let emailErrors = errors.find(err => err.code === 'DuplicateEmail');
+      if (emailErrors) {
+        setFieldError('email', emailErrors.description);
+      } else {
+        setFieldError('password', errors.pop().description);
+      }
+    }
+
+    // console.log(values);
+    setButtonDisable(false);
   };
 
   const {
     values,
     errors,
     touched,
+    setFieldError,
     handleBlur,
     handleChange,
     handleSubmit,
@@ -55,14 +84,14 @@ const Signup: React.FC = () => {
 
         <TextField
           mb="0.75rem"
-          name="name"
+          name="fullName"
           label="Họ và tên"
           placeholder="Nguyễn Văn A"
           fullwidth
           onBlur={handleBlur}
           onChange={handleChange}
-          value={values.name || ""}
-          errorText={touched.name && errors.name}
+          value={values.fullName || ""}
+          errorText={touched.fullName && errors.fullName}
         />
         <TextField
           mb="0.75rem"
@@ -104,7 +133,7 @@ const Signup: React.FC = () => {
         />
         <TextField
           mb="1rem"
-          name="re_password"
+          name="confirmPassword"
           placeholder="*********"
           type={passwordVisibility ? "text" : "password"}
           label="Xác nhận mật khẩu"
@@ -125,8 +154,8 @@ const Signup: React.FC = () => {
           }
           onBlur={handleBlur}
           onChange={handleChange}
-          value={values.re_password || ""}
-          errorText={touched.re_password && errors.re_password}
+          value={values.confirmPassword || ""}
+          errorText={touched.confirmPassword && errors.confirmPassword}
         />
 
         <CheckBox
@@ -146,6 +175,7 @@ const Signup: React.FC = () => {
             </FlexBox>
           }
         />
+        {touched.agreement && errors.agreement && <p style={{ color: "red" }}>{errors.agreement}</p>}
 
         <Button
           mb="1.65rem"
@@ -153,8 +183,9 @@ const Signup: React.FC = () => {
           color="primary"
           type="submit"
           fullwidth
+          disabled={buttonDisable}
         >
-          ĐĂNG KÝ
+          ĐĂNG KÝ &nbsp;{buttonDisable && <Spinner />}
         </Button>
 
         <Box mb="1rem">
@@ -166,7 +197,7 @@ const Signup: React.FC = () => {
           </FlexBox>
         </Box>
 
-        
+
 
         <FlexBox
           justifyContent="center"
@@ -199,18 +230,18 @@ const Signup: React.FC = () => {
 };
 
 const initialValues = {
-  name: "",
+  fullName: "",
   email: "",
   password: "",
-  re_password: "",
+  confirmPassword: "",
   agreement: false,
 };
 
 const formSchema = yup.object().shape({
-  name: yup.string().required("Vui lòng nhập tên"),
-  email: yup.string().email("Vui lòng nhập lại email").required("Vui lòng nhập email"),
+  fullName: yup.string().required("Vui lòng nhập tên"),
+  email: yup.string().email("Email không đúng định dạng").required("Vui lòng nhập email"),
   password: yup.string().required("Vui lòng nhập mật khẩu"),
-  re_password: yup
+  confirmPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "Mật khẩu không khớp")
     .required("Vui lòng nhập lại mật khẩu"),
@@ -218,7 +249,7 @@ const formSchema = yup.object().shape({
     .bool()
     .test(
       "agreement",
-      "Đồng ý với chính sách và điều khoản của CiTi Shop!",
+      "Bạn phải đồng ý với chính sách và điều khoản của CiTi Shop!",
       (value) => value === true
     )
     .required("Bạn phải đồng ý với chính sách và điều khoản của chúng tôi"),

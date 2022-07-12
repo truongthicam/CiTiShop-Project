@@ -8,10 +8,25 @@ import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import Pagination from "@component/pagination/Pagination";
 import TableRow from "@component/TableRow";
 import Typography, { H5 } from "@component/Typography";
+import { UserDto } from "@utils/apiTypes";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
 const AddressList = () => {
+  const [user, setUser] = useState<UserDto>(undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    const userJson = localStorage.getItem('User');
+    if (!userJson) {
+      router.replace("/403");
+    } else {
+      setUser(JSON.parse(userJson));
+    }
+  }, [])
+  
   return (
     <div>
       <DashboardPageHeader
@@ -75,8 +90,8 @@ const AddressList = () => {
       <FlexBox justifyContent="center" mt="2.5rem">
         <Pagination
           pageCount={5}
-          onChange={(data) => {
-            console.log(data.selected);
+          onChange={(selected) => {
+            console.log(selected);
           }}
         />
       </FlexBox>

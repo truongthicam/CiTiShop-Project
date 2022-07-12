@@ -1,3 +1,4 @@
+import { InvoiceDto } from "@utils/apiTypes";
 import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
@@ -10,25 +11,18 @@ import TableRow from "../TableRow";
 import Typography, { H5, Small } from "../Typography";
 
 export interface OrderRowProps {
-  item: {
-    orderNo: any;
-    status: string;
-    href: string;
-    purchaseDate: string | Date;
-    price: number;
-  };
+  item: InvoiceDto;
+  isAdmin?: boolean
 }
 
-const OrderRow: React.FC<OrderRowProps> = ({ item }) => {
-  const getColor = (status) => {
-    switch (status) {
-      case "Chờ xác nhận":
+const OrderRow: React.FC<OrderRowProps> = ({ item, isAdmin }) => {
+  const getColor = (paymentStatus) => {
+    switch (paymentStatus) {
+      case "Đang chờ thanh toán":
         return "secondary";
-      case "Đang giao":
-        return "secondary";
-      case "Đã giao":
+      case "Thanh toán thành công":
         return "success";
-      case "Hủy":
+      case "Thanh toán thất bại":
         return "error";
       default:
         return "";
@@ -36,21 +30,21 @@ const OrderRow: React.FC<OrderRowProps> = ({ item }) => {
   };
 
   return (
-    <Link href={item.href}>
-      <TableRow as="a" href={item.href} my="1rem" padding="6px 18px">
+    <Link href={isAdmin ? `/admin/orders/${item.id}` : `/orders/${item.id}`}>
+      <TableRow as="a" href={isAdmin ? `/admin/orders/${item.id}` : `/orders/${item.id}`} my="1rem" padding="6px 18px">
         <H5 m="6px" textAlign="left">
-          {item.orderNo}
+          {item.id}
         </H5>
         <Box m="6px">
-          <Chip p="0.25rem 1rem" bg={`${getColor(item.status)}.light`}>
-            <Small color={`${getColor(item.status)}.main`}>{item.status}</Small>
+          <Chip p="0.25rem 1rem" bg={`${getColor(item.paymentStatus)}.light`}>
+            <Small color={`${getColor(item.paymentStatus)}.main`}>{item.paymentStatus}</Small>
           </Chip>
         </Box>
         <Typography className="flex-grow pre" m="6px" textAlign="left">
-          {format(new Date(item.purchaseDate), " dd-MM-yyyy")}
+          {format(new Date(`${item.dateOrdered}Z`), "kk:mm:ss dd-MM-yyyy")}
         </Typography>
         <Typography m="6px" textAlign="left">
-          {item.price} VND
+          {item.totalPayment} VND
         </Typography>
 
         <Hidden flex="0 0 0 !important" down={769}>

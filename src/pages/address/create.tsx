@@ -8,7 +8,6 @@ import React, { useEffect, useState } from "react";
 const AddressUpdater = () => {
   const [user, setUser] = useState<UserDto>(undefined);
   const router = useRouter();
-  const { id } = router.query;
 
   useEffect(() => {
     // Perform localStorage action
@@ -20,7 +19,7 @@ const AddressUpdater = () => {
     }
   }, [])
 
-  return !user ? <Spinner /> : <AddressEditor id={parseInt(id as string)} user={user} />;
+  return !user ? <Spinner /> : <AddressEditor user={user} />;
 };
 
 AddressUpdater.layout = DashboardLayout;

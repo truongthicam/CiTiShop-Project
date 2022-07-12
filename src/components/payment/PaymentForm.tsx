@@ -1,39 +1,129 @@
-import { Formik } from "formik";
+// import { Formik } from "formik";
+import Spinner from "@component/Spinner";
+import { useAppContext } from "@context/app/AppContext";
+import { CartItem } from "@reducer/cartReducer";
+import { CreateInvoiceDto, InvoiceDto, MomoPaymentResponseDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
-import * as yup from "yup";
+import { Fragment, useCallback, useState } from "react";
+// import * as yup from "yup";
 import useWindowSize from "../../hooks/useWindowSize";
-import Box from "../Box";
+// import Box from "../Box";
 import Button from "../buttons/Button";
 import { Card1 } from "../Card1";
 import Divider from "../Divider";
-import FlexBox from "../FlexBox";
+// import FlexBox from "../FlexBox";
 import Grid from "../grid/Grid";
 import Radio from "../radio/Radio";
-import TextField from "../text-field/TextField";
+// import TextField from "../text-field/TextField";
 import Typography from "../Typography";
 
-const PaymentForm = () => {
-  const [paymentMethod, setPaymentMethod] = useState("credit-card");
+export interface PaymentFormProps {
+  onSubmit?: (selected: number) => void;
+}
+
+const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
+  const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const width = useWindowSize();
   const router = useRouter();
   const isMobile = width < 769;
 
-  const handleFormSubmit = async (values) => {
-    console.log(values);
-    router.push("/payment");
+  const [buttonDisable, setButtonDisable] = useState(false);
+  const { state, dispatch } = useAppContext();
+  const cartList: CartItem[] = state.cart.cartList;
+
+  // const handleFormSubmit = async (values) => {
+  //   console.log(values);
+  //   router.push("/payment");
+  // };
+
+  const handleClearCart = useCallback(
+    () => {
+      dispatch({
+        type: "CLEAR_CART",
+        payload: undefined
+      });
+    },
+    []
+  );
+
+  const getTotalPrice = () => {
+    return (
+      cartList.reduce(
+        (accumulator, item) => accumulator + item.price * item.qty,
+        0
+      ) || 0
+    );
   };
 
-  const handlePaymentMethodChange = ({ target: { name } }) => {
+  const handlePaymentSubmit = async () => {
+    // router.push("https://localhost:7008/swagger/index.html"); return;
+    // console.log(paymentMethod);
+    if (onSubmit) onSubmit(paymentMethod === "momo" ? 1 : 0)
+
+    setButtonDisable(true);
+    let invoiceStr = localStorage.getItem('CreateInvoice');
+    if (invoiceStr) {
+      let invoiceJson: CreateInvoiceDto = JSON.parse(invoiceStr);
+      let values: CreateInvoiceDto = {
+        // 1. /cart
+        cartItems: cartList.map((item) => { return { productId: item.id, quantity: item.qty } }),
+        deliveryDescription: "",
+        // 2. /checkout
+        receiverName: invoiceJson.receiverName,
+        email: invoiceJson.email,
+        phoneNumber: invoiceJson.phoneNumber,
+        deliveryAddress: invoiceJson.deliveryAddress,
+        // 3. /payment
+        paymentType: paymentMethod === "momo" ? 1 : 0, // 0: Nhận ; 1: Momo
+        // CheckoutSummary
+        totalCost: getTotalPrice(),
+        totalFee: 40000,
+        discount: 40000,
+      };
+      // console.log(values);
+      let response = await fetch(new URL("/api/Invoice/", apiEndpoint), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(values),
+      });
+      // console.log(response);
+      let data = await response.json();
+      console.log('Response JSON: ', data);
+      if (response.ok) {
+        if (data.momoResponse) { // Pay using Momo
+          let momoResponse: MomoPaymentResponseDto = data.momoResponse;
+          console.log('Momo Response: ', momoResponse);
+          if (momoResponse.errorCode === 0) { // Redirect to Momo Payment
+            router.push(momoResponse.payUrl);
+          } else {
+            alert(momoResponse.localMessage);
+          }
+        } else { // COD
+          let invoiceResponse: InvoiceDto = data;
+          console.log('Invoice Response: ', invoiceResponse);
+          router.push("/orders");
+        }
+        handleClearCart();
+      }
+    }
+
+    setButtonDisable(false);
+  };
+
+  const handlePaymentMethodChange = ({ target: { name, value } }) => {
     setPaymentMethod(name);
+    // console.log(name, value);
   };
 
   return (
     <Fragment>
       <Card1 mb="2rem">
-        <Radio
+        {/* <Radio
           name="credit-card"
           mb="1.5rem"
           color="secondary"
@@ -125,10 +215,11 @@ const PaymentForm = () => {
               </form>
             )}
           </Formik>
-        )}
+        )} */}
 
         <Radio
           name="momo"
+          value={1}
           mb="1.5rem"
           color="secondary"
           checked={paymentMethod === "momo"}
@@ -141,7 +232,7 @@ const PaymentForm = () => {
         />
         <Divider mb="1.5rem" mx="-2rem" />
 
-        {paymentMethod === "momo" && (
+        {/* {paymentMethod === "momo" && (
           <Fragment>
             <FlexBox alignItems="flex-end" mb="30px">
               <TextField
@@ -161,10 +252,11 @@ const PaymentForm = () => {
 
             <Divider mb="1.5rem" mx="-2rem" />
           </Fragment>
-        )}
+        )} */}
 
         <Radio
           name="cod"
+          value={0}
           color="secondary"
           checked={paymentMethod === "cod"}
           label={
@@ -178,37 +270,35 @@ const PaymentForm = () => {
 
       <Grid container spacing={7}>
         <Grid item sm={6} xs={12}>
-          <Link href="/checkout">
+          {!buttonDisable && <Link href="/checkout">
             <Button variant="outlined" color="primary" type="button" fullwidth>
               Quay lại
             </Button>
-          </Link>
+          </Link>}
         </Grid>
         <Grid item sm={6} xs={12}>
-          <Link href="/orders">
-            <Button variant="contained" color="primary" type="submit" fullwidth>
-              Đặt hàng
-            </Button>
-          </Link>
+          <Button variant="contained" color="primary" type="submit" fullwidth
+            disabled={buttonDisable} onClick={handlePaymentSubmit}>
+            Đặt hàng &nbsp;{buttonDisable && <Spinner />}
+          </Button>
         </Grid>
       </Grid>
     </Fragment>
   );
 };
 
-const initialValues = {
-  card_no: "",
-  name: "",
-  exp_date: "",
-  cvc: "",
-};
+// const initialValues = {
+//   card_no: "",
+//   name: "",
+//   exp_date: "",
+//   cvc: "",
+// };
 
-const checkoutSchema = yup.object().shape({
-  card_no: yup.string().required("Vui lòng nhập số thẻ"),
-  name: yup.string().required("Vui lòng nhập tên chủ thẻ"),
-  exp_date: yup.string().required("Vui lòng nhập ngày hết hạn"),
-  cvc: yup.string().required("Vui lòng nhập CVV/CVC"),
-  
-});
+// const checkoutSchema = yup.object().shape({
+//   card_no: yup.string().required("Vui lòng nhập số thẻ"),
+//   name: yup.string().required("Vui lòng nhập tên chủ thẻ"),
+//   exp_date: yup.string().required("Vui lòng nhập ngày hết hạn"),
+//   cvc: yup.string().required("Vui lòng nhập CVV/CVC"),
+// });
 
 export default PaymentForm;

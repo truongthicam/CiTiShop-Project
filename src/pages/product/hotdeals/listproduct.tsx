@@ -11,14 +11,51 @@ import ProductCard9List from "@component/products/ProductCard9List";
 import ProductFilterCard from "@component/products/ProductFilterCard";
 import Select from "@component/Select";
 import Sidenav from "@component/sidenav/Sidenav";
+import Spinner from "@component/Spinner";
 import { H5, Paragraph } from "@component/Typography";
-import { useCallback, useState } from "react";
+import { ProductDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
+import { useCallback, useEffect, useState } from "react";
 import useWindowSize from "../../../hooks/useWindowSize";
 
 const ListProduct = () => {
   const [view, setView] = useState("grid");
   const width = useWindowSize();
   const isTablet = width < 1025;
+
+  const [loading, setLoading] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
+
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState<ProductDto[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+    // console.log(id);
+    fetch(new URL(`/api/Product/?page=${pageNumber}&limit=${pageLimit}`, apiEndpoint))
+      .then(async response => {
+        // console.log(response);
+        if (response.ok) {
+          let responseJson = await response.json();
+          // console.log(responseJson);
+          setTotalPages(responseJson.totalPages);
+          setTotalItems(responseJson.totalItems);
+          setCurrentPage(responseJson.currentPage);
+          setItems(responseJson.items);
+          setLoading(false);
+        }
+      }, (err) => {
+        console.error(err);
+      })
+  }, [pageNumber]);
+
+  const togglePageChange = useCallback((selected: number) => {
+    // console.log(selected);
+    setPageNumber(selected + 1);
+  }, []);
 
   const toggleView = useCallback(
     (v) => () => {
@@ -40,7 +77,7 @@ const ListProduct = () => {
       >
         <div>
           <H5>SẢN PHẨM DEALS HOT</H5>
-          
+
         </div>
         <FlexBox alignItems="center" flexWrap="wrap">
           <Paragraph color="text.muted" mr="1rem">
@@ -97,7 +134,13 @@ const ListProduct = () => {
         </Hidden>
 
         <Grid item lg={9} xs={12}>
-          {view === "grid" ? <ProductCard1List /> : <ProductCard9List />}
+          {loading ? <Spinner /> : totalItems === 0 ? <H5 style={{ textAlign: 'center' }}>Không tìm thấy sản phẩm nào.</H5> : view === "grid"
+            ? <ProductCard1List limit={pageLimit} page={pageNumber} currentPage={currentPage}
+              items={items} totalItems={totalItems} totalPages={totalPages}
+              onChange={togglePageChange} />
+            : <ProductCard9List limit={pageLimit} page={pageNumber} currentPage={currentPage}
+              items={items} totalItems={totalItems} totalPages={totalPages}
+              onChange={togglePageChange} />}
         </Grid>
       </Grid>
     </Box>

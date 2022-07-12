@@ -25,6 +25,7 @@ export interface ProductCard1Props extends CardProps {
   off?: number;
   rating?: number;
   id?: string | number;
+  originalPrice?: number; // Original price if discountPrice is not null
   // className?: string;
   // style?: CSSProperties;
   // imgUrl: string;
@@ -43,7 +44,7 @@ const ProductCard1: React.FC<ProductCard1Props> = ({
   imgUrl,
   title,
   price,
-  off,
+  originalPrice = null,
   rating,
   ...props
 }) => {
@@ -75,7 +76,7 @@ const ProductCard1: React.FC<ProductCard1Props> = ({
   return (
     <StyledProductCard1 {...props}>
       <div className="image-holder">
-        {!!off && (
+        {/* {!off && (
           <Chip
             position="absolute"
             bg="primary.main"
@@ -88,7 +89,7 @@ const ProductCard1: React.FC<ProductCard1Props> = ({
           >
             {off}% off
           </Chip>
-        )}
+        )} */}
 
         <FlexBox className="extra-icons">
           <Icon
@@ -143,11 +144,11 @@ const ProductCard1: React.FC<ProductCard1Props> = ({
 
             <FlexBox alignItems="center" mt="10px">
               <SemiSpan pr="0.5rem" fontWeight="600" color="primary.main">
-                {(price - (price * off) / 100)} VND
+                {price} VND
               </SemiSpan>
-              {!!off && (
+              {!!originalPrice && (
                 <SemiSpan color="text.muted" fontWeight="600">
-                  <del>{price} VND</del>
+                  <del>{originalPrice} VND</del>
                 </SemiSpan>
               )}
             </FlexBox>

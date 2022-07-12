@@ -1,8 +1,9 @@
 import IconButton from "@component/buttons/IconButton";
 import Image from "@component/Image";
 import { useAppContext } from "@context/app/AppContext";
+import { UserDto } from "@utils/apiTypes";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "../Box";
 import Categories from "../categories/Categories";
 import Container from "../Container";
@@ -26,6 +27,20 @@ const Header: React.FC<HeaderProps> = ({ isFixed, className }) => {
   const toggleSidenav = () => setOpen(!open);
   const { state } = useAppContext();
   const { cartList } = state.cart;
+
+  const [login, setLogin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const userJson = localStorage.getItem('User');
+    if (userJson) {
+      setLogin(true);
+      const userDto: UserDto = JSON.parse(userJson);
+      setIsAdmin(userDto.isAdmin);
+    } else {
+      setLogin(false);
+    }
+  }, []);
 
   const cartHandle = (
     <FlexBox ml="20px" alignItems="flex-start">
@@ -84,17 +99,25 @@ const Header: React.FC<HeaderProps> = ({ isFixed, className }) => {
         </FlexBox>
 
         <FlexBox className="header-right" alignItems="center">
-          <UserLoginDialog
-            handle={
+          {login
+            ? <Link href={isAdmin ? "/admin/dashboard" : "/profile"}>
               <IconButton ml="1rem" bg="gray.200" p="8px">
-                <Icon size="28px">user</Icon>
+                <Icon size="28px">user_filled</Icon>
               </IconButton>
-            }
-          >
-            <Box>
-              <Login />
-            </Box>
-          </UserLoginDialog>
+            </Link>
+            : <UserLoginDialog
+              handle={
+                <IconButton ml="1rem" bg="gray.200" p="8px">
+                  <Icon size="28px">user</Icon>
+                </IconButton>
+              }
+            >
+              <Box>
+                <Login />
+              </Box>
+            </UserLoginDialog>
+          }
+
 
           <Sidenav
             handle={cartHandle}

@@ -1,4 +1,7 @@
-import React from "react";
+import Spinner from "@component/Spinner";
+import { InvoiceDto, UserDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
+import React, { useCallback, useEffect, useState } from "react";
 import FlexBox from "../FlexBox";
 import Hidden from "../hidden/Hidden";
 import DashboardPageHeader from "../layout/DashboardPageHeader";
@@ -7,9 +10,45 @@ import TableRow from "../TableRow";
 import { H5 } from "../Typography";
 import OrderRow from "./OrderRow";
 
-export interface CustomerOrderListProps {}
+export interface CustomerOrderListProps {
+  user: UserDto;
+}
 
-const CustomerOrderList: React.FC<CustomerOrderListProps> = () => {
+const CustomerOrderList: React.FC<CustomerOrderListProps> = ({ user }) => {
+  const [loading, setLoading] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
+
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState<InvoiceDto[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+    // console.log(id);
+    fetch(new URL(`api/Invoice/?userId=${user.id}&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint))
+      .then(async response => {
+        // console.log(response);
+        if (response.ok) {
+          let responseJson = await response.json();
+          // console.log(responseJson);
+          setTotalPages(responseJson.totalPages);
+          setTotalItems(responseJson.totalItems);
+          setCurrentPage(responseJson.currentPage);
+          setItems(responseJson.items);
+          setLoading(false);
+        }
+      }, (err) => {
+        console.error(err);
+      })
+  }, [pageNumber]);
+
+  const togglePageChange = useCallback((selected: number) => {
+    // console.log(selected);
+    setPageNumber(selected + 1);
+  }, []);
+
   return (
     <div>
       <DashboardPageHeader title="Đơn hàng" iconName="bag_filled" />
@@ -37,59 +76,59 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = () => {
         </TableRow>
       </Hidden>
 
-      {orderList.map((item, ind) => (
-        <OrderRow item={item} key={ind} />
-      ))}
+      {loading ? <Spinner /> : totalItems === 0 ? <H5 style={{ textAlign: 'center' }}>Không tìm thấy đơn hàng nào.</H5> :
+        <>
+          {items.map((item, ind) => (
+            <OrderRow item={item} key={ind} />
+          ))}
 
-      <FlexBox justifyContent="center" mt="2.5rem">
-        <Pagination
-          pageCount={5}
-          onChange={(data) => {
-            console.log(data.selected);
-          }}
-        />
-      </FlexBox>
+          <FlexBox justifyContent="center" mt="2.5rem">
+            <Pagination
+              pageCount={totalPages} currentPage={currentPage} onChange={togglePageChange}
+            />
+          </FlexBox>
+        </>
+      }
     </div>
   );
 };
 
-const orderList = [
-  {
-    orderNo: "1050017AS",
-    status: "Chờ xác nhận",
-    purchaseDate: new Date(),
-    price: 350000,
-    href: "/orders/5452423",
-  },
-  {
-    orderNo: "1050017AS",
-    status: "Chờ xác nhận",
-    purchaseDate: new Date(),
-    price: 500000,
-    href: "/orders/5452423",
-  },
-  {
-    orderNo: "1050017AS",
-    status: "Đang giao",
-    purchaseDate: "2022/06/10",
-    price: 300000,
-    href: "/orders/5452423",
-  },
-  {
-    orderNo: "1050017AS",
-    status: "Đã giao",
-    purchaseDate: "2022/05/23",
-    price: 700000,
-    href: "/orders/5452423",
-  },
-  {
-    orderNo: "1050017AS",
-    status: "Hủy",
-    purchaseDate: "2022/01/23",
-    price: 700000,
-    href: "/orders/5452423",
-  },
-  
-];
+// const orderList = [
+//   {
+//     orderNo: "1050017AS",
+//     status: "Chờ xác nhận",
+//     purchaseDate: new Date(),
+//     price: 350000,
+//     href: "/orders/5452423",
+//   },
+//   {
+//     orderNo: "1050017AS",
+//     status: "Chờ xác nhận",
+//     purchaseDate: new Date(),
+//     price: 500000,
+//     href: "/orders/5452423",
+//   },
+//   {
+//     orderNo: "1050017AS",
+//     status: "Đang giao",
+//     purchaseDate: "2022/06/10",
+//     price: 300000,
+//     href: "/orders/5452423",
+//   },
+//   {
+//     orderNo: "1050017AS",
+//     status: "Đã giao",
+//     purchaseDate: "2022/05/23",
+//     price: 700000,
+//     href: "/orders/5452423",
+//   },
+//   {
+//     orderNo: "1050017AS",
+//     status: "Hủy",
+//     purchaseDate: "2022/01/23",
+//     price: 700000,
+//     href: "/orders/5452423",
+//   },
+// ];
 
 export default CustomerOrderList;

@@ -1,6 +1,8 @@
+import { CreateInvoiceDto, UserDto } from "@utils/apiTypes";
 import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import * as yup from "yup";
 import Button from "../buttons/Button";
 import { Card1 } from "../Card1";
@@ -8,19 +10,35 @@ import Grid from "../grid/Grid";
 import TextField from "../text-field/TextField";
 import Typography from "../Typography";
 
-const CheckoutForm = () => {
+export interface CheckoutFormProps {
+  user: UserDto;
+}
+
+const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  user,
+}) => {
+  const [invoice, setInvoice] = useState<CreateInvoiceDto>(undefined);
   const router = useRouter();
 
+  const initialValues = () => {
+    return {
+      receiverName: user?.fullName ?? "",
+      email: user?.email ?? "",
+      phoneNumber: user?.phoneNumber ?? "",
+      deliveryAddress: "",
+    }
+  };
+
   const handleFormSubmit = async (values) => {
-    console.log(values);
+    // console.log(values);
+    let createInvoiceStr = JSON.stringify({ ...invoice, ...values });
+    localStorage.setItem('CreateInvoice', createInvoiceStr);
     router.push("/payment");
   };
 
- 
-
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValues()}
       validationSchema={checkoutSchema}
       onSubmit={handleFormSubmit}
     >
@@ -31,7 +49,7 @@ const CheckoutForm = () => {
         handleChange,
         handleBlur,
         handleSubmit,
-        
+
       }) => (
         <form onSubmit={handleSubmit}>
           <Card1 mb="2rem">
@@ -42,59 +60,59 @@ const CheckoutForm = () => {
             <Grid container spacing={7}>
               <Grid item sm={6} xs={12}>
                 <TextField
-                  name="shipping_name"
+                  name="receiverName"
                   label="Người nhận"
                   fullwidth
                   mb="1rem"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.shipping_name || ""}
-                  errorText={touched.shipping_name && errors.shipping_name}
+                  value={values.receiverName || ""}
+                  errorText={touched.receiverName && errors.receiverName}
                 />
                 <TextField
-                  name="shipping_contact"
+                  name="phoneNumber"
                   label="Số điện thoại"
                   fullwidth
                   mb="1rem"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.shipping_contact || ""}
+                  value={values.phoneNumber || ""}
                   errorText={
-                    touched.shipping_contact && errors.shipping_contact
+                    touched.phoneNumber && errors.phoneNumber
                   }
                 />
-                
+
               </Grid>
               <Grid item sm={6} xs={12}>
                 <TextField
-                  name="shipping_email"
+                  name="email"
                   label="Email"
                   type="email"
                   fullwidth
                   mb="1rem"
                   onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.shipping_email || ""}
-                  errorText={touched.shipping_email && errors.shipping_email}
+                  // onChange={handleChange}
+                  value={values.email || ""}
+                  errorText={touched.email && errors.email}
                 />
                 <TextField
-                  name="shipping_address"
+                  name="deliveryAddress"
                   label="Địa chỉ"
                   fullwidth
                   mb="1rem"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.shipping_address || ""}
+                  value={values.deliveryAddress || ""}
                   errorText={
-                    touched.shipping_address && errors.shipping_address
+                    touched.deliveryAddress && errors.deliveryAddress
                   }
                 />
-                
+
               </Grid>
             </Grid>
           </Card1>
 
-          
+
 
           <Grid container spacing={7}>
             <Grid item sm={6} xs={12}>
@@ -126,22 +144,11 @@ const CheckoutForm = () => {
   );
 };
 
-const initialValues = {
-  shipping_name: "",
-  shipping_email: "",
-  shipping_contact: "",
-  shipping_address: "",
- 
-
-
-};
-
 const checkoutSchema = yup.object().shape({
-  shipping_name: yup.string().required("Vui lòng nhập tên"),
-  shipping_email: yup.string().email("invalid email").required("Vui lòng nhập email"),
-  shipping_contact: yup.string().required("Vui lòng nhập số điện thoại"),
-  shipping_address: yup.string().required("Vui lòng nhập địa chỉ"),
-  
+  receiverName: yup.string().required("Vui lòng nhập tên"),
+  email: yup.string().email("invalid email").required("Vui lòng nhập email"),
+  phoneNumber: yup.string().required("Vui lòng nhập số điện thoại"),
+  deliveryAddress: yup.string().required("Vui lòng nhập địa chỉ"),
 });
 
 export default CheckoutForm;

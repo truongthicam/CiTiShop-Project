@@ -8,14 +8,59 @@ import Hidden from "@component/hidden/Hidden";
 import Icon from "@component/icon/Icon";
 import DashboardLayout from "@component/layout/CustomerDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
+import Spinner from "@component/Spinner";
 import TextField from "@component/text-field/TextField";
-import { Formik } from "formik";
+import { UserDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
+import { Formik, useFormik } from "formik";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 
 const ProfileEditor = () => {
+  const [buttonDisable, setButtonDisable] = useState(false);
+  const [user, setUser] = useState<UserDto>(undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    const userJson = localStorage.getItem('User');
+    if (!userJson) {
+      router.replace("/403");
+    } else {
+      setUser(JSON.parse(userJson));
+    }
+  }, []);
+
   const handleFormSubmit = async (values) => {
-    console.log(values);
+    setButtonDisable(true);
+    let response = await fetch(new URL(`/api/User/${user.email}`, apiEndpoint), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(values),
+    });
+    // console.log(response);
+    let data = await response.json();
+    // console.log(data);
+    if (response.ok) {
+      let userDto: UserDto = data;
+      localStorage.setItem('User', JSON.stringify(userDto));
+      alert('Chỉnh sửa thông tin thành công!');
+    } else if (response.status == 400) {
+      // console.log(data);
+      let errors = data.errors;
+      let message = errors.fullName ? Array(...errors.fullName).pop() : "" + "\n" +
+        errors.phoneNumber ? Array(...errors.phoneNumber).pop() : "";
+      alert(message);
+    } else {
+      alert(response.status);
+    }
+
+    // console.log(values);
+    setButtonDisable(false);
   };
 
   return (
@@ -32,53 +77,58 @@ const ProfileEditor = () => {
         }
       />
 
-      <Card1>
-        <FlexBox alignItems="flex-end" mb="22px">
-          <Avatar src="" size={64} />
+      {!user ? <Spinner /> :
+        <Card1>
+          <FlexBox alignItems="flex-end" mb="22px">
+            <Avatar src="" size={64} />
 
-          <Box ml="-20px" zIndex={1}>
-            <label htmlFor="profile-image">
-              <Button
-                as="span"
-                size="small"
-                bg="gray.300"
-                color="secondary"
-                height="auto"
-                p="6px"
-                borderRadius="50%"
-              >
-                <Icon>camera</Icon>
-              </Button>
-            </label>
-          </Box>
-          <Hidden>
-            <input
-              className="hidden"
-              onChange={(e) => console.log(e.target.files)}
-              id="profile-image"
-              accept="image/*"
-              type="file"
-            />
-          </Hidden>
-        </FlexBox>
+            <Box ml="-20px" zIndex={1}>
+              <label htmlFor="profile-image">
+                <Button
+                  as="span"
+                  size="small"
+                  bg="gray.300"
+                  color="secondary"
+                  height="auto"
+                  p="6px"
+                  borderRadius="50%"
+                >
+                  <Icon>camera</Icon>
+                </Button>
+              </label>
+            </Box>
+            <Hidden>
+              <input
+                className="hidden"
+                onChange={(e) => console.log(e.target.files)}
+                id="profile-image"
+                accept="image/*"
+                type="file"
+              />
+            </Hidden>
+          </FlexBox>
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={checkoutSchema}
-          onSubmit={handleFormSubmit}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-          }) => (
-            <form onSubmit={handleSubmit}>
-              <Box mb="30px">
-                <Grid container horizontal_spacing={6} vertical_spacing={4}>
-                  <Grid item md={6} xs={12}>
+          <Formik
+            initialValues={{
+              fullName: user?.fullName || "",
+              phoneNumber: user?.phoneNumber || "",
+              dateOfBirth: "",
+            }}
+            validationSchema={checkoutSchema}
+            onSubmit={handleFormSubmit}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <Box mb="30px">
+                  <Grid container horizontal_spacing={6} vertical_spacing={4}>
+                    {/* <Grid item md={6} xs={12}>
                     <TextField
                       name="first_name"
                       label="Họ"
@@ -88,19 +138,19 @@ const ProfileEditor = () => {
                       value={values.first_name || ""}
                       errorText={touched.first_name && errors.first_name}
                     />
-                  </Grid>
-                  <Grid item md={6} xs={12}>
-                    <TextField
-                      name="last_name"
-                      label="Tên"
-                      fullwidth
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.last_name || ""}
-                      errorText={touched.last_name && errors.last_name}
-                    />
-                  </Grid>
-                  <Grid item md={6} xs={12}>
+                  </Grid> */}
+                    <Grid item md={6} xs={12}>
+                      <TextField
+                        name="fullName"
+                        label="Họ tên"
+                        fullwidth
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.fullName || ""}
+                        errorText={touched.fullName && errors.fullName}
+                      />
+                    </Grid>
+                    {/* <Grid item md={6} xs={12}>
                     <TextField
                       name="email"
                       type="email"
@@ -111,58 +161,56 @@ const ProfileEditor = () => {
                       value={values.email || ""}
                       errorText={touched.email && errors.email}
                     />
+                  </Grid> */}
+                    <Grid item md={6} xs={12}>
+                      <TextField
+                        name="phoneNumber"
+                        label="Số điện thoại"
+                        fullwidth
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.phoneNumber || ""}
+                        errorText={touched.phoneNumber && errors.phoneNumber}
+                      />
+                    </Grid>
+                    <Grid item md={6} xs={12}>
+                      <TextField
+                        name="dateOfBirth"
+                        label="Ngày sinh"
+                        type="date"
+                        fullwidth
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.dateOfBirth || ""}
+                        errorText={touched.dateOfBirth && errors.dateOfBirth}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item md={6} xs={12}>
-                    <TextField
-                      name="contact"
-                      label="Số điện thoại"
-                      fullwidth
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.contact || ""}
-                      errorText={touched.contact && errors.contact}
-                    />
-                  </Grid>
-                  <Grid item md={6} xs={12}>
-                    <TextField
-                      name="birth_date"
-                      label="Ngày sinh"
-                      type="date"
-                      fullwidth
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      value={values.birth_date || ""}
-                      errorText={touched.birth_date && errors.birth_date}
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
+                </Box>
 
-              <Button type="submit" variant="contained" color="primary">
-                Lưu
-              </Button>
-            </form>
-          )}
-        </Formik>
-      </Card1>
-    </div>
+                <Button type="submit" variant="contained" color="primary" disabled={buttonDisable}>
+                  Lưu &nbsp;{buttonDisable && <Spinner />}
+                </Button>
+              </form>
+            )}
+          </Formik>
+        </Card1>}
+    </div >
   );
 };
 
-const initialValues = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  contact: "",
-  birth_date: "",
-};
+// const initialValues = {
+//   fullName: "",
+//   // email: "",
+//   phoneNumber: "",
+//   dateOfBirth: "",
+// };
 
 const checkoutSchema = yup.object().shape({
-  first_name: yup.string().required("Vui lòng nhập họ"),
-  last_name: yup.string().required("vui lòng nhập tên"),
-  email: yup.string().email("Email không hợp lệ").required("Vui lòng nhập Email"),
-  contact: yup.string().required("Vui lòng nhập số điện thoại"),
-  birth_date: yup.date().required("Vui lòng nhập ngày sinh"),
+  fullName: yup.string().required("vui lòng nhập tên"),
+  // email: yup.string().email("Email không hợp lệ").required("Vui lòng nhập Email"),
+  phoneNumber: yup.string().required("Vui lòng nhập số điện thoại"),
+  dateOfBirth: yup.date().required("Vui lòng nhập ngày sinh"),
 });
 
 ProfileEditor.layout = DashboardLayout;

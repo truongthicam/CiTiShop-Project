@@ -57,14 +57,14 @@ const App = ({ Component, pageProps }: any) => {
         <Layout>
           {/* <Component {...pageProps} /> */}
           <Component {...pageProps}>
-          <MessengerCustomerChat
-    pageId="893789904104597"
-    appId="1072311093493076"
-  />
+            {/* <MessengerCustomerChat
+              pageId="893789904104597"
+              appId="1072311093493076"
+            /> */}
           </Component>
-          <MessengerChat
-          pageId="893789904104597"
-        />
+          {/* <MessengerChat
+            pageId="893789904104597"
+          /> */}
         </Layout>
 
         {/* WebChat Container with show/close button */}

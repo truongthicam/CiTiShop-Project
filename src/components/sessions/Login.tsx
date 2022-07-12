@@ -1,3 +1,6 @@
+import Spinner from "@component/Spinner";
+import { UserDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
 import { useFormik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,6 +17,7 @@ import { H3, H5, H6, SemiSpan, Small, Span } from "../Typography";
 import { StyledSessionCard } from "./SessionStyle";
 
 const Login: React.FC = () => {
+  const [buttonDisable, setButtonDisable] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const router = useRouter();
 
@@ -22,8 +26,31 @@ const Login: React.FC = () => {
   }, []);
 
   const handleFormSubmit = async (values) => {
-    router.push("/profile");
-    console.log(values);
+    setButtonDisable(true);
+    let response = await fetch(new URL("/api/User/Login", apiEndpoint), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(values),
+    });
+    // console.log(response);
+    let data = await response.json();
+    // console.log(data);
+    if (response.ok) {
+      let userDto: UserDto = data;
+      localStorage.setItem('User', JSON.stringify(userDto));
+      if (userDto.isAdmin) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/");
+      }
+    } else {
+      alert(data);
+      // console.log(data);
+    }
+    // console.log(values);
+    setButtonDisable(false);
   };
 
   const {
@@ -95,7 +122,6 @@ const Login: React.FC = () => {
           errorText={touched.password && errors.password}
         />
 
-
         <Link href="/">
           <a>Quên mật khẩu?
           </a>
@@ -106,8 +132,9 @@ const Login: React.FC = () => {
           color="primary"
           type="submit"
           fullwidth
+          disabled={buttonDisable}
         >
-          ĐĂNG NHẬP
+          ĐĂNG NHẬP &nbsp;{buttonDisable && <Spinner />}
         </Button>
 
         <Box mb="1rem">
@@ -119,7 +146,7 @@ const Login: React.FC = () => {
           </FlexBox>
         </Box>
 
-       
+
 
         <FlexBox
           justifyContent="center"

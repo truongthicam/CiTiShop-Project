@@ -35,7 +35,7 @@ const CustomerDashboardNavigation = () => {
                 </Box>
                 <span>{item.title}</span>
               </FlexBox>
-              <span>{item.count}</span>
+              {/* <span>{item.count}</span> */}
             </StyledDashboardNav>
           ))}
         </Fragment>
@@ -70,19 +70,19 @@ const linkList = [
         href: "/profile",
         title: "Thông tin",
         iconName: "user",
-        count: 3,
+        // count: 3,
       },
       {
         href: "/address",
         title: "Sổ địa chỉ",
         iconName: "pin",
-        count: 16,
+        // count: 16,
       },
       {
         href: "/payment-methods",
         title: "Phương thức thanh toán",
         iconName: "credit-card",
-        count: 4,
+        // count: 4,
       },
     ],
   },

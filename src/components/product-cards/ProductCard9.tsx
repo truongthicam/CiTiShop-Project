@@ -30,6 +30,7 @@ export interface ProductCard9Props {
     url: string;
   }>;
   [key: string]: unknown;
+  originalPrice: number; // Original price if discountPrice is not null
   // className?: string;
   // style?: CSSProperties;
   // imgUrl: string;
@@ -47,7 +48,7 @@ const ProductCard9: React.FC<ProductCard9Props> = ({
   imgUrl,
   title,
   price,
-  off,
+  originalPrice,
   subcategories,
   rating,
   ...props
@@ -73,7 +74,7 @@ const ProductCard9: React.FC<ProductCard9Props> = ({
       <Grid container spacing={1}>
         <Grid item md={3} sm={4} xs={12}>
           <Box position="relative">
-            {off && (
+            {/* {off && (
               <Chip
                 position="absolute"
                 bg="primary.main"
@@ -86,7 +87,7 @@ const ProductCard9: React.FC<ProductCard9Props> = ({
               >
                 {off}% off
               </Chip>
-            )}
+            )} */}
             <Icon
               color="secondary"
               variant="small"
@@ -140,9 +141,9 @@ const ProductCard9: React.FC<ProductCard9Props> = ({
               <H5 fontWeight={600} color="primary.main" mr="0.5rem">
                 {price} VND
               </H5>
-              {off && (
+              {!!originalPrice && (
                 <SemiSpan fontWeight="600">
-                  <del>{(price - (price * off) / 100)} VND</del>
+                  <del>{originalPrice} VND</del>
                 </SemiSpan>
               )}
             </FlexBox>

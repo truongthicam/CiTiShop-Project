@@ -1,3 +1,4 @@
+import { UserDto } from "@utils/apiTypes";
 import Link from "next/link";
 import React from "react";
 import Box from "../Box";
@@ -9,22 +10,15 @@ import TableRow from "../TableRow";
 import Typography, { H5, Small } from "../Typography";
 
 export interface UserRowProps {
-  item: {
-    userNo: any;
-    href: string;
-    status: string;
-    name: string;
-    email: string;
-    author: string;
-  };
+  item: UserDto;
 }
 
 const UserRow: React.FC<UserRowProps> = ({ item }) => {
-  const getColor = (status) => {
-    switch (status) {
-      case "Hoạt động":
+  const getColor = (emailConfirmed: boolean) => {
+    switch (emailConfirmed) {
+      case true:
         return "success";
-      case "Khóa":
+      case false:
         return "error";
       default:
         return "";
@@ -32,24 +26,24 @@ const UserRow: React.FC<UserRowProps> = ({ item }) => {
   };
 
   return (
-    <Link href={item.href}>
-      <TableRow as="a" href={item.href} my="1rem" padding="6px 18px">
-        <H5 m="6px" textAlign="left">
-          {item.userNo}
-        </H5>
-        <Box m="6px">
-          <Chip p="0.25rem 1rem" bg={`${getColor(item.status)}.light`}>
-            <Small color={`${getColor(item.status)}.main`}>{item.status}</Small>
-          </Chip>
-        </Box>
+    <Link href={`/admin/users/${item.email}`}>
+      <TableRow as="a" href={`/admin/users/${item.email}`} my="1rem" padding="6px 18px">
+        <Typography m="6px" textAlign="left">
+          {item.id}
+        </Typography>
         <Typography className="flex-grow pre" m="6px" textAlign="left">
-          {item.name}
+          {item.fullName}
         </Typography>
         <Typography m="6px" textAlign="left">
           {item.email}
         </Typography>
+        <Box m="6px">
+          <Chip p="0.25rem 1rem" bg={`${getColor(item.emailConfirmed)}.light`}>
+            <Small color={`${getColor(item.emailConfirmed)}.main`}>{item.emailConfirmed ? "Hoạt động" : "Khoá"}</Small>
+          </Chip>
+        </Box>
         <Typography m="6px" textAlign="left">
-          {item.author}
+          {item.isAdmin ? "NV" : "KH"}
         </Typography>
 
         <Hidden flex="0 0 0 !important" down={769}>

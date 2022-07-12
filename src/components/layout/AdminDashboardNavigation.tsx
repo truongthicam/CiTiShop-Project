@@ -28,7 +28,7 @@ const AdminDashboardNavigation = () => {
             </Box>
             <span>{item.title}</span>
           </FlexBox>
-          <span>{item.count}</span>
+          {/* <span>{item.count}</span> */}
         </StyledDashboardNav>
       ))}
     </DashboardNavigationWrapper>

@@ -79,7 +79,7 @@ const stepperList = [
   },
   {
     title: "Thanh toán",
-    disabled: false,
+    disabled: true, // Prevent missing delivary info
   },
   {
     title: "Đơn đặt",

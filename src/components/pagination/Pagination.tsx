@@ -7,20 +7,23 @@ import { StyledPagination } from "./PaginationStyle";
 
 export interface PaginationProps extends SpaceProps {
   pageCount: number;
+  currentPage?: number;
   marginPagesDisplayed?: number;
   pageRangeDisplayed?: number;
-  onChange?: (data: { selected: number }) => void;
+  onChange?: (selected: number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
   pageCount,
+  currentPage, // Start at 1
   marginPagesDisplayed,
   pageRangeDisplayed,
   onChange,
   ...props
 }) => {
-  const handlePageChange = async (page) => {
-    if (onChange) onChange(page.selected);
+  const handlePageChange = async (page: { selected: number; }) => {
+    if (onChange) onChange(page.selected); // page.selected start at 0
+    // console.log(page);
   };
 
   return (
@@ -67,6 +70,7 @@ const Pagination: React.FC<PaginationProps> = ({
         // subContainerClassName="pages pagination"
         activeClassName="active"
         disabledClassName="disabled"
+        forcePage={currentPage ? currentPage - 1 : null} // Page index start at 0
       />
     </StyledPagination>
   );

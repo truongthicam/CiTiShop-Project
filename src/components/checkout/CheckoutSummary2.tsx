@@ -4,7 +4,13 @@ import Divider from "../Divider";
 import FlexBox from "../FlexBox";
 import Typography, { Span } from "../Typography";
 
-const CheckoutSummary2: React.FC = () => {
+export interface CheckoutSummaryProps {
+  totalPrice: number;
+}
+
+const CheckoutSummary2: React.FC<CheckoutSummaryProps> = ({
+  totalPrice,
+}) => {
   return (
     <Box>
       <Typography color="secondary.900" fontWeight="700" mb="1.5rem">
@@ -32,7 +38,7 @@ const CheckoutSummary2: React.FC = () => {
 
       <FlexBox justifyContent="space-between" alignItems="center" mb="0.5rem">
         <Typography color="text.hint">Tổng đơn:</Typography>
-        <Typography fontWeight="700">{(230.000) }VND</Typography>
+        <Typography fontWeight="700">{totalPrice} VND</Typography>
       </FlexBox>
 
       <FlexBox justifyContent="space-between" alignItems="center" mb="0.5rem">
@@ -45,10 +51,10 @@ const CheckoutSummary2: React.FC = () => {
         <Typography fontWeight="700">{(40.000)} VND</Typography>
       </FlexBox>
 
-      <FlexBox justifyContent="space-between" alignItems="center" mb="1.5rem">
+      {/* <FlexBox justifyContent="space-between" alignItems="center" mb="1.5rem">
         <Typography color="text.hint">Giảm giá:</Typography>
         <Typography fontWeight="700">10.000 VND</Typography>
-      </FlexBox>
+      </FlexBox> */}
 
       <Divider bg="gray.300" mb="0.5rem" />
 
@@ -59,7 +65,7 @@ const CheckoutSummary2: React.FC = () => {
         mb="0.5rem"
       >
         <Typography>Tổng đơn:</Typography>
-        <Typography fontWeight="700">{(230.000)} VND</Typography>
+        <Typography fontWeight="700">{totalPrice} VND</Typography>
       </FlexBox>
     </Box>
   );

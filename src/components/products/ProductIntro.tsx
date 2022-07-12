@@ -17,6 +17,7 @@ export interface ProductIntroProps {
   title: string;
   price: number;
   id?: string | number;
+  quantity?: number;
 }
 
 const ProductIntro: React.FC<ProductIntroProps> = ({
@@ -24,6 +25,7 @@ const ProductIntro: React.FC<ProductIntroProps> = ({
   title,
   price = 200000,
   id,
+  quantity = 0,
 }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const { state, dispatch } = useAppContext();
@@ -97,10 +99,10 @@ const ProductIntro: React.FC<ProductIntroProps> = ({
         <Grid item md={6} xs={12} alignItems="center">
           <H1 mb="1rem">{title}</H1>
 
-          <FlexBox alignItems="center" mb="1rem">
+          {/* <FlexBox alignItems="center" mb="1rem">
             <SemiSpan>Thương hiệu:</SemiSpan>
             <H6 ml="8px">Tên thương hiệu</H6>
-          </FlexBox>
+          </FlexBox> */}
 
           <FlexBox alignItems="center" mb="1rem">
             <SemiSpan>Đánh giá:</SemiSpan>
@@ -118,7 +120,7 @@ const ProductIntro: React.FC<ProductIntroProps> = ({
           </Box>
           <Box mb="20px">
             
-            <SemiSpan color="inherit">Kho: 20 sản phẩm</SemiSpan>
+            <SemiSpan color="inherit">Kho: {quantity} sản phẩm</SemiSpan>
           </Box>
           
 
@@ -129,6 +131,7 @@ const ProductIntro: React.FC<ProductIntroProps> = ({
             color="primary"
             mb="36px"
             onClick={handleCartAmountChange(1)}
+            disabled={quantity <= 0}
           >
             Thêm vào giỏ hàng
           </Button>
@@ -159,9 +162,9 @@ const ProductIntro: React.FC<ProductIntroProps> = ({
             </FlexBox>
           )}
 
-          <FlexBox alignItems="center" mb="1rem">
+          {/* <FlexBox alignItems="center" mb="1rem">
             <SemiSpan>Giá thị trường: 155200 VND</SemiSpan>
-          </FlexBox>
+          </FlexBox> */}
         </Grid>
       </Grid>
     </Box>

@@ -2,14 +2,16 @@ import React from "react";
 import Box from "../Box";
 import Typography, { H3 } from "../Typography";
 
-export interface ProductDescriptionProps {}
+export interface ProductDescriptionProps {
+  description: string;
+}
 
-const ProductDescription: React.FC<ProductDescriptionProps> = () => {
+const ProductDescription: React.FC<ProductDescriptionProps> = ({description}) => {
   return (
     <Box>
       <H3 mb="1rem">Mô tả sản phẩm:</H3>
       <Typography>
-        Mô tả...........
+        {description}
       </Typography>
     </Box>
   );

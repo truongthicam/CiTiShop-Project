@@ -4,14 +4,37 @@ import Button from "@component/buttons/Button";
 import Card from "@component/Card";
 import FlexBox from "@component/FlexBox";
 import Grid from "@component/grid/Grid";
+import Icon from "@component/icon/Icon";
 import DashboardLayout from "@component/layout/CustomerDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import TableRow from "@component/TableRow";
 import Typography, { H3, H5, Small } from "@component/Typography";
+import { UserDto } from "@utils/apiTypes";
+import { format } from "date-fns";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Profile = () => {
+  const [user, setUser] = useState<UserDto>(undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Perform localStorage action
+    const userJson = localStorage.getItem('User');
+    if (!userJson) {
+      router.replace("/403");
+    } else {
+      setUser(JSON.parse(userJson));
+    }
+  }, [])
+
+  const handleLogout = (e) => {
+    localStorage.removeItem('User');
+    localStorage.removeItem('CreateInvoice');
+    router.push("/");
+  }
+
   return (
     <div>
       <DashboardPageHeader
@@ -38,7 +61,7 @@ const Profile = () => {
                   alignItems="center"
                 >
                   <div>
-                    <H5 my="0px">Trương Thị Cam</H5>
+                    <H5 my="0px">{String(user?.fullName)}</H5>
                     <FlexBox alignItems="center">
                       <Typography fontSize="14px" color="text.hint">
                         Tích lũy:
@@ -63,6 +86,7 @@ const Profile = () => {
 
           <Grid item lg={6} md={6} sm={12} xs={12}>
             <Grid container spacing={4}>
+              {/* TODO: Replace with API */}
               {infoList.map((item) => (
                 <Grid item lg={3} sm={6} xs={6} key={item.subtitle}>
                   <FlexBox
@@ -89,37 +113,36 @@ const Profile = () => {
       <TableRow p="0.75rem 1.5rem">
         <FlexBox flexDirection="column" p="0.5rem">
           <Small color="text.muted" mb="4px" textAlign="left">
-            Họ
+            Họ tên
           </Small>
-          <span>Trương Thị</span>
-        </FlexBox>
-        <FlexBox flexDirection="column" p="0.5rem">
-          <Small color="text.muted" mb="4px" textAlign="left">
-            Tên
-          </Small>
-          <span>Cam</span>
+          <span>{String(user?.fullName)}</span>
         </FlexBox>
         <FlexBox flexDirection="column" p="0.5rem">
           <Small color="text.muted" mb="4px" textAlign="left">
             Email
           </Small>
-          <span>camcam.qng@gmail.com</span>
+          <span>{String(user?.email)}</span>
         </FlexBox>
         <FlexBox flexDirection="column" p="0.5rem">
           <Small color="text.muted" mb="4px" textAlign="left">
             Số điện thoại
           </Small>
-          <span>0383060695</span>
+          <span>{user?.phoneNumber ?? 'Chưa có'}</span>
         </FlexBox>
         <FlexBox flexDirection="column" p="0.5rem">
           <Small color="text.muted" mb="4px">
             Sinh nhật
           </Small>
           <span className="pre">
-            03/08/2000
+            {/* {user?.dateOfBirth ? user?.dateOfBirth.slice(0, 10) : 'Chưa có'} */}
+            {user?.dateOfBirth ? format(new Date(`${user.dateOfBirth}Z`), "dd-MM-yyyy") : 'Chưa có'}
           </span>
         </FlexBox>
       </TableRow>
+
+      <Button color="primary" bg="primary.light" px="2rem" marginTop="2rem" onClick={handleLogout}>
+        Đăng xuất &nbsp;<Icon size="20px">logout</Icon>
+      </Button>
     </div>
   );
 };
