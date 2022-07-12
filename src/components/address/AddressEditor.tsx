@@ -28,7 +28,7 @@ const AddressEditor: React.FC<AddressEditorProps> = ({
 
   useEffect(() => {
     if (id) { // Edit
-      fetch(new URL(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint)))
+      fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint))
         .then(async response => {
           let data = await response.json();
           if (response.ok) {
