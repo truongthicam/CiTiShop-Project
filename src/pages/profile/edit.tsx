@@ -12,7 +12,7 @@ import Spinner from "@component/Spinner";
 import TextField from "@component/text-field/TextField";
 import { UserDto } from "@utils/apiTypes";
 import { apiEndpoint } from "@utils/constants";
-import { Formik, useFormik } from "formik";
+import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -35,7 +35,7 @@ const ProfileEditor = () => {
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
-    let response = await fetch(new URL(`/api/User/${user.email}`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/User/${user.email}`, apiEndpoint).href, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

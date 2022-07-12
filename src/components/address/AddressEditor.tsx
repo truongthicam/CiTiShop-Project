@@ -28,7 +28,7 @@ const AddressEditor: React.FC<AddressEditorProps> = ({
 
   useEffect(() => {
     if (id) { // Edit
-      fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint))
+      fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint).href)
         .then(async response => {
           let data = await response.json();
           if (response.ok) {
@@ -45,7 +45,7 @@ const AddressEditor: React.FC<AddressEditorProps> = ({
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
     if (id) { // Edit
-      let response = await fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint), {
+      let response = await fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint).href, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ const AddressEditor: React.FC<AddressEditorProps> = ({
         alert(response.status);
       }
     } else { // Create
-      let response = await fetch(new URL(`/api/UserDeliveryAddress/`, apiEndpoint), {
+      let response = await fetch(new URL(`/api/UserDeliveryAddress/`, apiEndpoint).href, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

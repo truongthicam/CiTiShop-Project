@@ -11,19 +11,18 @@ import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import Spinner from "@component/Spinner";
 import TableRow from "@component/TableRow";
 import Typography, { H5, H6, Paragraph } from "@component/Typography";
-import productDatabase from "@data/product-database";
 import useWindowSize from "@hook/useWindowSize";
 import { InvoiceDetailDto, InvoiceProductDto, UserDto } from "@utils/apiTypes";
 import { apiEndpoint } from "@utils/constants";
 import { add, format } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 // type OrderStatus = "packaging" | "shipping" | "delivering" | "complete";
 
 const OrderDetails = () => {
-  const orderStatusList = ["packaging", "shipping", "delivering", "complete"];
+  // const orderStatusList = ["packaging", "shipping", "delivering", "complete"];
   const stepIconList = ["package-box", "truck-1", "delivery"];
 
   const [statusIndex, setStatusIndex] = useState(0);
@@ -48,20 +47,24 @@ const OrderDetails = () => {
     }
 
     if (id) {
-      fetch(new URL(`/api/Invoice/${id}`, apiEndpoint))
+      fetch(new URL(`/api/Invoice/${id}`, apiEndpoint).href)
         .then(async response => {
           // console.log(response);
           let invoiceJson: InvoiceDetailDto = await response.json();
           if (response.ok) {
             // console.log(invoiceJson);
-            setStatusIndex(getDeliveryIndex(invoiceJson.deliveryStatus));
-            if (!invoiceJson.dateDelivered) {
-              let orderedDate = new Date(`${invoiceJson.dateOrdered}Z`);
-              setExpectedDate(format(add(orderedDate, { days: 14 }), "dd/MM/yyyy"));
+            if (invoiceJson.userId !== user.id) {
+              router.replace("/403");
+            } else {
+              setStatusIndex(getDeliveryIndex(invoiceJson.deliveryStatus));
+              if (!invoiceJson.dateDelivered) {
+                let orderedDate = new Date(`${invoiceJson.dateOrdered}Z`);
+                setExpectedDate(format(add(orderedDate, { days: 14 }), "dd/MM/yyyy"));
+              }
+              setInvoice(invoiceJson);
+              setInvoiceProducts(invoiceJson.invoiceProducts);
+              setLoading(false);
             }
-            setInvoice(invoiceJson);
-            setInvoiceProducts(invoiceJson.invoiceProducts);
-            setLoading(false);
           } else {
             router.replace("/404");
           }

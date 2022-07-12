@@ -1,6 +1,5 @@
 import Button from "@component/buttons/Button";
 import Card from "@component/Card";
-import DropZone from "@component/DropZone";
 import Grid from "@component/grid/Grid";
 import AdminDashboardLayout from "@component/layout/AdminDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
@@ -38,7 +37,7 @@ const OrderDetails = () => {
 
     if (id) {
       // console.log(id);
-      fetch(new URL(`/api/Product/${id}`, apiEndpoint))
+      fetch(new URL(`/api/Product/${id}`, apiEndpoint).href)
         .then(async response => {
           // console.log(response);
           let productJson: ProductDto = await response.json();
@@ -56,7 +55,7 @@ const OrderDetails = () => {
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
-    let response = await fetch(new URL(`/api/Product/${product.id}`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/Product/${product.id}`, apiEndpoint).href, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -78,7 +77,7 @@ const OrderDetails = () => {
       else if (errors.price) alert(`Giá: ${Array(...errors.price).pop()}`);
       else if (errors.imageUrl) alert(`URL hình ảnh: ${Array(...errors.imageUrl).pop()}`);
       else if (errors.description) alert(`Mô tả: ${Array(...errors.imageUrl).pop()}`);
-      
+
     } else {
       alert(response.status);
     }

@@ -15,7 +15,7 @@ const Recommend: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     // console.log(id);
-    fetch(new URL(`/api/Product/Random/?count=${12}`, apiEndpoint))
+    fetch(new URL(`/api/Product/Random/?count=${12}`, apiEndpoint).href)
       .then(async response => {
         // console.log(response);
         if (response.ok) {
@@ -34,7 +34,7 @@ const Recommend: React.FC = () => {
     <Container mb="70px">
       <CategorySectionHeader title="Gợi ý riêng cho bạn" seeMoreLink="#" />
       {loading ? <Spinner /> : totalItems === 0 ? <></> : <Grid container spacing={6}>
-        {items.map((item, ind) => (
+        {items.map((item) => (
           <Grid item lg={3} md={4} sm={6} xs={12} key={item.id}>
             <ProductCard1 hoverEffect id={item.id} imgUrl={item.imageUrl} title={item.name}
               price={item.discountPrice ?? item.price}

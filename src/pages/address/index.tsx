@@ -36,7 +36,7 @@ const AddressList = () => {
       let userDto: UserDto = JSON.parse(userJson)
       setUser(userDto);
 
-      fetch(new URL(`/api/UserDeliveryAddress?userId=${userDto.id}&page=${pageNumber}`, apiEndpoint))
+      fetch(new URL(`/api/UserDeliveryAddress?userId=${userDto.id}&page=${pageNumber}`, apiEndpoint).href)
         .then(async response => {
           if (response.ok) {
             let responseJson = await response.json();
@@ -60,7 +60,7 @@ const AddressList = () => {
 
   const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: string) => {
     e.stopPropagation();
-    let response = await fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/UserDeliveryAddress/${user.id}/${id}`, apiEndpoint).href, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

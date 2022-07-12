@@ -34,7 +34,7 @@ const SalePage = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(new URL(`/api/Product/?page=${page}&limit=${productPerPage}`, apiEndpoint))
+    fetch(new URL(`/api/Product/?page=${page}&limit=${productPerPage}`, apiEndpoint).href)
       .then(async response => {
         // console.log(response);
         if (response.ok) {

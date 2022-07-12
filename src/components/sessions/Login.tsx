@@ -27,7 +27,7 @@ const Login: React.FC = () => {
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
-    let response = await fetch(new URL("/api/User/Login", apiEndpoint), {
+    let response = await fetch(new URL("/api/User/Login", apiEndpoint).href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

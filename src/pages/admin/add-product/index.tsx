@@ -35,7 +35,7 @@ const AddProduct = () => {
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
-    let response = await fetch(new URL(`/api/Product/`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/Product/`, apiEndpoint).href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

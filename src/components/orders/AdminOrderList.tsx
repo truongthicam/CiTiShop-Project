@@ -14,7 +14,7 @@ export interface AdminOrderListProps { }
 const AdminOrderList: React.FC<AdminOrderListProps> = () => {
   const [loading, setLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
+  const pageLimit = 10;
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -24,7 +24,7 @@ const AdminOrderList: React.FC<AdminOrderListProps> = () => {
   useEffect(() => {
     setLoading(true);
     // console.log(id);
-    fetch(new URL(`api/Invoice/?ignoreUserId=true&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint))
+    fetch(new URL(`api/Invoice/?ignoreUserId=true&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint).href)
       .then(async response => {
         // console.log(response);
         if (response.ok) {
@@ -73,7 +73,7 @@ const AdminOrderList: React.FC<AdminOrderListProps> = () => {
 
       {loading ? <Spinner /> : totalItems === 0 ? <H5 style={{ textAlign: 'center' }}>Không tìm thấy đơn hàng nào.</H5> :
         <>
-          {items.map((item, ind) => (
+          {items.map((item) => (
             <OrderRow item={item} key={item.id} isAdmin={true} />
           ))}
           <FlexBox justifyContent="center" mt="2.5rem">

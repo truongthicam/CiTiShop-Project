@@ -8,13 +8,12 @@ import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import Pagination from "@component/pagination/Pagination";
 import TableRow from "@component/TableRow";
 import Typography, { H5 } from "@component/Typography";
-import { UserDto } from "@utils/apiTypes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const AddressList = () => {
-  const [user, setUser] = useState<UserDto>(undefined);
+  // const [user, setUser] = useState<UserDto>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,11 +21,12 @@ const AddressList = () => {
     const userJson = localStorage.getItem('User');
     if (!userJson) {
       router.replace("/403");
-    } else {
-      setUser(JSON.parse(userJson));
     }
+    // else {
+    //   setUser(JSON.parse(userJson));
+    // }
   }, [])
-  
+
   return (
     <div>
       <DashboardPageHeader

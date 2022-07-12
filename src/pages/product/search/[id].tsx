@@ -28,7 +28,7 @@ const ProductSearchResult = () => {
   const router = useRouter();
   const { id } = router.query; // id is search query name
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
+  const pageLimit = 10;
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -39,7 +39,7 @@ const ProductSearchResult = () => {
     if (id) {
       setLoading(true);
       // console.log(id);
-      fetch(new URL(`/api/Product/?name=${id}&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint))
+      fetch(new URL(`/api/Product/?name=${id}&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint).href)
         .then(async response => {
           // console.log(response);
           if (response.ok) {

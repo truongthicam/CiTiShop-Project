@@ -5,11 +5,9 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { Fragment, useState } from "react";
-import MessengerCustomerChat from 'react-messenger-customer-chat';
 import { ThemeProvider } from "styled-components";
 import { AppProvider } from "../contexts/app/AppContext";
 import { GlobalStyles } from "../utils/globalStyles";
-import MessengerChat from '../utils/MessengerChat';
 import { theme } from "../utils/theme";
 
 //Binding events.
@@ -28,12 +26,12 @@ const App = ({ Component, pageProps }: any) => {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        
+
         {/* thumbnail And title for social media */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="CiTi Shop | Mỹ phẩm chính hãng" />
-        
-        
+
+
 
         {/* Google analytics */}
         <script
@@ -51,7 +49,7 @@ const App = ({ Component, pageProps }: any) => {
           }}
         ></script>
       </Head>
-      
+
       <GlobalStyles />
       <AppProvider>
         <Layout>

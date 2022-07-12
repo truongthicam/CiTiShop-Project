@@ -38,7 +38,7 @@ const AccountSettings = () => {
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
-    let response = await fetch(new URL(`/api/User/${admin.email}`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/User/${admin.email}`, apiEndpoint).href, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

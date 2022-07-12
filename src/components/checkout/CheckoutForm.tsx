@@ -31,6 +31,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   const handleFormSubmit = async (values) => {
     // console.log(values);
+    setInvoice({ ...invoice, ...values });
     let createInvoiceStr = JSON.stringify({ ...invoice, ...values });
     localStorage.setItem('CreateInvoice', createInvoiceStr);
     router.push("/payment");

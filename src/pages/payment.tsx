@@ -1,13 +1,12 @@
-import { UserDto } from "@utils/apiTypes";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Grid from "../components/grid/Grid";
 import CheckoutNavLayout from "../components/layout/CheckoutNavLayout";
 import PaymentForm from "../components/payment/PaymentForm";
 import PaymentSummary from "../components/payment/PaymentSummary";
 
 const Checkout = () => {
-  const [user, setUser] = useState<UserDto>(undefined);
+  // const [user, setUser] = useState<UserDto>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -15,9 +14,10 @@ const Checkout = () => {
     const userJson = localStorage.getItem('User');
     if (!userJson) {
       router.replace("/login");
-    } else {
-      setUser(JSON.parse(userJson));
     }
+    // else {
+    //   setUser(JSON.parse(userJson));
+    // }
   }, [])
 
   return (

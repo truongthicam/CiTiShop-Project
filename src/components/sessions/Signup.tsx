@@ -25,7 +25,7 @@ const Signup: React.FC = () => {
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
-    let response = await fetch(new URL("/api/User/Register", apiEndpoint), {
+    let response = await fetch(new URL("/api/User/Register", apiEndpoint).href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

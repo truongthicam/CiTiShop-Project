@@ -8,7 +8,6 @@ import { CSSProperties } from "styled-components";
 import Box from "../Box";
 import Button from "../buttons/Button";
 import Card, { CardProps } from "../Card";
-import { Chip } from "../Chip";
 import FlexBox from "../FlexBox";
 import Icon from "../icon/Icon";
 import Modal from "../modal/Modal";

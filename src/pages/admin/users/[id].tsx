@@ -39,7 +39,7 @@ const ProfileUser = () => {
 
     if (id) {
       // console.log(id);
-      fetch(new URL(`/api/User/${id}`, apiEndpoint))
+      fetch(new URL(`/api/User/${id}`, apiEndpoint).href)
         .then(async response => {
           // console.log(response);
           let userJson: UserDto = await response.json();
@@ -55,7 +55,7 @@ const ProfileUser = () => {
     }
   }, [id]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     setButtonDisable(true);
     if (user.email === admin.email) {
       alert('Không thể thay đổi phân quyền chính tài khoản.');
@@ -63,7 +63,7 @@ const ProfileUser = () => {
     }
 
     let values = { isAdmin: !user.isAdmin }
-    let response = await fetch(new URL(`/api/User/${user.email}/Role`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/User/${user.email}/Role`, apiEndpoint).href, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

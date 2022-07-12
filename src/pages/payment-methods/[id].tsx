@@ -5,15 +5,14 @@ import Grid from "@component/grid/Grid";
 import DashboardLayout from "@component/layout/CustomerDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
 import TextField from "@component/text-field/TextField";
-import { UserDto } from "@utils/apiTypes";
 import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import * as yup from "yup";
 
 const PaymentMethodEditor = () => {
-  const [user, setUser] = useState<UserDto>(undefined);
+  // const [user, setUser] = useState<UserDto>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,9 +20,10 @@ const PaymentMethodEditor = () => {
     const userJson = localStorage.getItem('User');
     if (!userJson) {
       router.replace("/403");
-    } else {
-      setUser(JSON.parse(userJson));
     }
+    // else {
+    //   setUser(JSON.parse(userJson));
+    // }
   }, [])
 
   const {

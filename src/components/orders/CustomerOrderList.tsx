@@ -17,7 +17,7 @@ export interface CustomerOrderListProps {
 const CustomerOrderList: React.FC<CustomerOrderListProps> = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
+  const pageLimit = 10;
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
@@ -27,7 +27,7 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({ user }) => {
   useEffect(() => {
     setLoading(true);
     // console.log(id);
-    fetch(new URL(`api/Invoice/?userId=${user.id}&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint))
+    fetch(new URL(`api/Invoice/?userId=${user.id}&page=${pageNumber}&limit=${pageLimit}`, apiEndpoint).href)
       .then(async response => {
         // console.log(response);
         if (response.ok) {

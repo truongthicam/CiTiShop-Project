@@ -16,7 +16,7 @@ const Featured: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     // console.log(id);
-    fetch(new URL(`/api/Product/Random/?count=${6}`, apiEndpoint))
+    fetch(new URL(`/api/Product/Random/?count=${6}`, apiEndpoint).href)
       .then(async response => {
         // console.log(response);
         if (response.ok) {

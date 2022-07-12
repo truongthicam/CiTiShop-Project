@@ -59,8 +59,8 @@ const AdminProductList: React.FC<AdminProductListProps> = () => {
       <FlexBox justifyContent="center" mt="2.5rem">
         <Pagination
           pageCount={5}
-          onChange={(data) => {
-            console.log(data.selected);
+          onChange={(selected) => {
+            console.log(selected);
           }}
         />
       </FlexBox>

@@ -1,4 +1,3 @@
-import productDatabase from "@data/product-database";
 import { ProductDto } from "@utils/apiTypes";
 import React from "react";
 import FlexBox from "../FlexBox";

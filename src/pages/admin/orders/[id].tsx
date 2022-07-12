@@ -45,7 +45,7 @@ const OrderDetails = () => {
     }
 
     if (id) {
-      fetch(new URL(`/api/Invoice/${id}/details`, apiEndpoint))
+      fetch(new URL(`/api/Invoice/${id}/details`, apiEndpoint).href)
         .then(async response => {
           // console.log(response);
           let invoiceJson: InvoiceFullDetailDto = await response.json();
@@ -77,13 +77,13 @@ const OrderDetails = () => {
     setDeliveryDescription(e.target.value);
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async () => {
     setButtonDisable(true);
     let values = {
       deliveryStatus: deliveryStatus, deliveryDescription: deliveryDescription,
     };
     console.log(values);
-    let response = await fetch(new URL(`/api/Invoice/${invoiceDetail.id}`, apiEndpoint), {
+    let response = await fetch(new URL(`/api/Invoice/${invoiceDetail.id}`, apiEndpoint).href, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'

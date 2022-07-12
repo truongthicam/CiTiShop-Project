@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useCallback, useState } from "react";
 // import * as yup from "yup";
-import useWindowSize from "../../hooks/useWindowSize";
+// import useWindowSize from "../../hooks/useWindowSize";
 // import Box from "../Box";
 import Button from "../buttons/Button";
 import { Card1 } from "../Card1";
@@ -26,9 +26,9 @@ export interface PaymentFormProps {
 const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
-  const width = useWindowSize();
+  // const width = useWindowSize();
   const router = useRouter();
-  const isMobile = width < 769;
+  // const isMobile = width < 769;
 
   const [buttonDisable, setButtonDisable] = useState(false);
   const { state, dispatch } = useAppContext();
@@ -86,7 +86,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
         returnUrl: new URL(currentUrl.pathname, currentUrl.origin).href,
       };
       // console.log(values);
-      let response = await fetch(new URL("/api/Invoice/", apiEndpoint), {
+      let response = await fetch(new URL("/api/Invoice/", apiEndpoint).href, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -117,7 +117,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
     setButtonDisable(false);
   };
 
-  const handlePaymentMethodChange = ({ target: { name, value } }) => {
+  const handlePaymentMethodChange = ({ target: { name } }) => {
     setPaymentMethod(name);
     // console.log(name, value);
   };

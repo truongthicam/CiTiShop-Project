@@ -21,7 +21,7 @@ const ProductDetails = () => {
   useEffect(() => {
     if (id) {
       // console.log(id);
-      fetch(new URL(`/api/Product/${id}`, apiEndpoint))
+      fetch(new URL(`/api/Product/${id}`, apiEndpoint).href)
         .then(async response => {
           // console.log(response);
           let productJson: ProductDto = await response.json();

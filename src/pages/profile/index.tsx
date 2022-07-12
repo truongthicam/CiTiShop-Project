@@ -29,7 +29,7 @@ const Profile = () => {
     }
   }, [])
 
-  const handleLogout = (e) => {
+  const handleLogout = () => {
     localStorage.removeItem('User');
     localStorage.removeItem('CreateInvoice');
     router.push("/");

@@ -14,8 +14,7 @@ export interface AdminUserListProps { }
 const AdminUserList: React.FC<AdminUserListProps> = () => {
   const [loading, setLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
-
+  const pageLimit = 10;
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +23,7 @@ const AdminUserList: React.FC<AdminUserListProps> = () => {
   useEffect(() => {
     setLoading(true);
     // console.log(id);
-    fetch(new URL(`api/User/?page=${pageNumber}&limit=${pageLimit}`, apiEndpoint))
+    fetch(new URL(`api/User/?page=${pageNumber}&limit=${pageLimit}`, apiEndpoint).href)
       .then(async response => {
         // console.log(response);
         if (response.ok) {
@@ -75,7 +74,7 @@ const AdminUserList: React.FC<AdminUserListProps> = () => {
       </Hidden>
 
       {loading ? <Spinner /> : totalItems === 0 ? <H5 style={{ textAlign: 'center' }}>Không tìm thấy tài khoản nào.</H5> :
-        <>{items.map((item, ind) => (
+        <>{items.map((item) => (
           <UserRow item={item} key={item.id} />
         ))}
 

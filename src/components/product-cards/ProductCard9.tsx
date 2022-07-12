@@ -1,4 +1,3 @@
-import { Chip } from "@component/Chip";
 import Image from "@component/Image";
 import Link from "next/link";
 import React, { Fragment, useCallback, useState } from "react";

@@ -1,10 +1,8 @@
-import Button from "@component/buttons/Button";
 import Card from "@component/Card";
 import { Span } from "@component/Typography";
-import { debounce } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "../Box";
 import FlexBox from "../FlexBox";
 import Icon from "../icon/Icon";
@@ -13,7 +11,7 @@ import MenuItem from "../MenuItem";
 import TextField from "../text-field/TextField";
 import StyledSearchBox from "./SearchBoxStyle";
 
-export interface SearchBoxProps {}
+export interface SearchBoxProps { }
 
 const SearchBox: React.FC<SearchBoxProps> = () => {
   const router = useRouter();
@@ -25,18 +23,18 @@ const SearchBox: React.FC<SearchBoxProps> = () => {
     setCategory(cat);
   };
 
-  const search = debounce((e) => {
-    const value = e.target?.value;
-    setSearchTerm(value);
-    // console.log(value, !value);
-    if (!value) setResultList([]);
-    else setResultList(dummySearchResult);
-  }, 200);
+  // const search = debounce((e) => {
+  //   const value = e.target?.value;
+  //   setSearchTerm(value);
+  //   // console.log(value, !value);
+  //   if (!value) setResultList([]);
+  //   else setResultList(dummySearchResult);
+  // }, 200);
 
-  const hanldeSearch = useCallback((event) => {
-    event.persist();
-    search(event);
-  }, []);
+  // const hanldeSearch = useCallback((event) => {
+  //   event.persist();
+  //   search(event);
+  // }, []);
 
   const handleDocumentClick = () => {
     setResultList([]);
@@ -131,8 +129,8 @@ const categories = [
   "Kem dưỡng",
 ];
 
-const dummySearchResult = [
-  //Database Citishop Tất cả sản phẩm để hiển thị gợi ý khi tìm kiếm
-];
+// const dummySearchResult = [
+//   //Database Citishop Tất cả sản phẩm để hiển thị gợi ý khi tìm kiếm
+// ];
 
 export default SearchBox;

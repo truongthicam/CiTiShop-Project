@@ -7,7 +7,7 @@ import { Chip } from "../Chip";
 import Hidden from "../hidden/Hidden";
 import Icon from "../icon/Icon";
 import TableRow from "../TableRow";
-import Typography, { H5, Small } from "../Typography";
+import Typography, { Small } from "../Typography";
 
 export interface UserRowProps {
   item: UserDto;
