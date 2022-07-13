@@ -14,4 +14,4 @@ export const layoutConstant = {
 };
 
 // export const apiEndpoint = "https://localhost:7008/"
-export const apiEndpoint = "https://citishopnet20220412221518.azurewebsites.net/"
+export const apiEndpoint = "https://citishopnet.azurewebsites.net/"
