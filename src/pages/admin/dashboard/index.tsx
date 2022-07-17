@@ -3,12 +3,15 @@ import AdminAnalyticsChart from "@component/dashboard/AdminAnalyticsChart";
 import Grid from "@component/grid/Grid";
 import AdminDashboardLayout from "@component/layout/AdminDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
+import Spinner from "@component/Spinner";
 import Typography, { H1, H5, Paragraph } from "@component/Typography";
 import { UserDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const AdminDashboard = () => {
+  const [dashboardList, setDashboardList] = useState<number[]>(undefined);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,6 +23,16 @@ const AdminDashboard = () => {
       let userDto: UserDto = JSON.parse(userJson);
       if (!userDto.isAdmin) {
         router.replace("/403");
+      } else {
+        fetch(new URL(`/api/Report/Dashboard`, apiEndpoint).href)
+          .then(async response => {
+            let data: number[] = await response.json();
+            if (response.ok) {
+              setDashboardList(data);
+            }
+          }, (err) => {
+            console.error(err);
+          });
       }
     }
   }, []);
@@ -29,14 +42,14 @@ const AdminDashboard = () => {
       <DashboardPageHeader title="Tổng quan" iconName="bag_filled" />
 
       <Grid container spacing={6}>
-        {cardList.map((item, ind) => (
+        {!dashboardList ? <Spinner /> : cardList.map((item, ind) => (
           <Grid item lg={4} md={4} sm={6} xs={12} key={ind}>
             <Typography as={Card} textAlign="center" py="1.5rem" height="100%">
               <H5 color="text.muted" mb="8px">
                 {item.title}
               </H5>
               <H1 color="gray.700" mb="4px" lineHeight="1.3">
-                {item.amount}
+                {dashboardList[ind]}
               </H1>
               <Paragraph color="text.muted">{item.subtitle}</Paragraph>
             </Typography>
@@ -62,36 +75,38 @@ const cardList = [
     amount: "1000000",
     subtitle: "Tháng",
   },
+  // {
+  //   title: "Lợi nhuận",
+  //   amount: "500000",
+  //   subtitle: "Tháng",
+  // },
   {
-    title: "Lợi nhuận",
-    amount: "500000",
-    subtitle: "Tháng",
-  },
-  {
-    title: "Khách hàng mới",
+    title: "Tổng số tài khoản",
     amount: "15",
     subtitle: "",
   },
 
   {
-    title: "Đơn hàng đã đặt",
+    title: "Tổng số đơn hàng",
     amount: "08",
     subtitle: "",
   },
   {
-    title: "Đơn hàng mới",
+    title: "Chờ thanh toán",
     amount: "02",
-    subtitle: "",
+    subtitle: "Đơn hàng",
   },
   {
-    title: "Đơn hàng hủy",
+    title: "Thanh toán thành công",
     amount: "02",
-    subtitle: "",
+    subtitle: "Đơn hàng",
   },
-
+  {
+    title: "Thanh toán thất bại",
+    amount: "02",
+    subtitle: "Đơn hàng",
+  },
 ];
-
-
 
 AdminDashboard.layout = AdminDashboardLayout;
 

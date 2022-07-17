@@ -13,11 +13,15 @@ import { UserDto } from "@utils/apiTypes";
 import { apiEndpoint } from "@utils/constants";
 import { Formik } from "formik";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import * as yup from "yup";
 
 const AccountSettings = () => {
-  const [buttonDisable, setButtonDisable] = useState(false);
+  const [_image, setImage] = useState(undefined);
+  const [imageSrc, setImageSrc] = useState("");
+  const [buttonDisable, setButtonDisable] = useState(true);
+  const [imageButtonLoading, _setImageButtonLoading] = useState(false);
+  const [editButtonLoading, setEditButtonLoading] = useState(false);
   const [admin, setAdmin] = useState<UserDto>(undefined);
   const router = useRouter();
 
@@ -30,14 +34,27 @@ const AccountSettings = () => {
       let userDto: UserDto = JSON.parse(userJson);
       if (userDto.isAdmin) {
         setAdmin(userDto);
+
+        // fetch(new URL(`/api/Image/${userDto.email}`, apiEndpoint).href)
+        //   .then(async response => {
+        //     let data: string = await response.json();
+        //     if (response.ok && !data.endsWith('/')) {
+        //       setImageSrc(data);
+        //     }
+        //   }, (err) => {
+        //     console.error(err);
+        //   });
       } else {
         router.replace("/403");
       }
     }
+    setButtonDisable(false);
   }, []);
 
   const handleFormSubmit = async (values) => {
     setButtonDisable(true);
+    setEditButtonLoading(true);
+
     let response = await fetch(new URL(`/api/User/${admin.email}`, apiEndpoint).href, {
       method: 'PUT',
       headers: {
@@ -63,12 +80,74 @@ const AccountSettings = () => {
     }
 
     // console.log(values);
+    setEditButtonLoading(false);
     setButtonDisable(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('User');
+    localStorage.removeItem('CreateInvoice');
+    router.push("/");
+  }
+
+  const handleShowImage = async (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.files);
+    if (e.target.files && e.target.files[0]) {
+      let imageFile = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = x => {
+        setImage(imageFile);
+        setImageSrc(`${x.target.result}`); // C:/fakepath/..
+      }
+      reader.readAsDataURL(imageFile)
+    }
+  }
+
+  // const handleImageSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setButtonDisable(true);
+  //   setImageButtonLoading(true);
+
+  //   if (image) {
+  //     const formData = new FormData();
+  //     formData.append("file", image);
+  //     let response = await fetch(new URL(`/api/Image/${admin.email}`, apiEndpoint).href, {
+  //       method: 'POST',
+  //       // headers: { // If set Content-Type header, upload won't work
+  //       //   'Content-Type': 'multipart/form-data'
+  //       // },
+  //       body: formData,
+  //     });
+  //     // console.log(response);
+  //     let data = await response.json();
+  //     // console.log(data);
+  //     if (response.ok) {
+  //       let path: string = data.path;
+  //       setImageSrc(path);
+  //     } else if (response.status == 400) {
+  //       let message: string = data;
+  //       alert(message);
+  //     } else {
+  //       alert(response.status);
+  //     }
+  //   } else {
+  //     alert("Không có hình ảnh nào được tải lên.");
+  //   }
+
+  //   // console.log(e);
+  //   setImageButtonLoading(false);
+  //   setButtonDisable(false);
+  // }
+
   return (
     <div>
-      <DashboardPageHeader title="Thông tin tài khoản" iconName="settings_filled" />
+      <DashboardPageHeader title="Thông tin tài khoản" iconName="settings_filled"
+        button={
+          <Button color="primary" bg="primary.light" px="2rem" onClick={handleLogout}>
+            Đăng xuất &nbsp;<Icon size="20px">logout</Icon>
+          </Button>
+        }
+      />
 
       <Card1 p="24px 30px">
         <Box
@@ -82,6 +161,7 @@ const AccountSettings = () => {
               "url(/assets/images/banners/banner-10.png) center/cover",
           }}
         >
+          {/* <form onSubmit={(e) => handleImageSubmit(e)}> */}
           <Box
             display="flex"
             alignItems="flex-end"
@@ -90,7 +170,7 @@ const AccountSettings = () => {
             left="24px"
           >
             <Avatar
-              src="/assets/images/faces/propic(9).png"
+              src={imageSrc}
               size={80}
               border="4px solid"
               borderColor="gray.100"
@@ -107,20 +187,26 @@ const AccountSettings = () => {
                   p="6px"
                   borderRadius="50%"
                 >
-                  <Icon>camera</Icon>
+                  {imageButtonLoading ? <Spinner /> : <Icon>camera</Icon>}
                 </Button>
               </label>
             </Box>
             <Hidden>
               <input
                 className="hidden"
-                onChange={(e) => console.log(e.target.files)}
+                onChange={(e) => handleShowImage(e)}
                 id="profile-image"
-                accept="image/*"
+                name="profile-image"
+                accept="image/png, image/jpg, image/jpeg, image/gif"
                 type="file"
+                disabled={buttonDisable}
               />
             </Hidden>
+            {/* <Button type="submit" variant="contained" bg="secondary.light" ml="2rem" disabled={buttonDisable}>
+                Lưu hình ảnh
+              </Button> */}
           </Box>
+          {/* </form> */}
 
 
         </Box>
@@ -209,7 +295,7 @@ const AccountSettings = () => {
                 </Box>
 
                 <Button type="submit" variant="contained" color="primary" disabled={buttonDisable}>
-                  Lưu &nbsp;{buttonDisable && <Spinner />}
+                  Lưu &nbsp;{editButtonLoading && <Spinner />}
                 </Button>
               </form>
             )}

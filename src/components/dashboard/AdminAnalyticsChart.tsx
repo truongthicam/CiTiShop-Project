@@ -1,3 +1,4 @@
+import { apiEndpoint } from "@utils/constants";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -82,31 +83,42 @@ const AdminAnalyticsChart = () => {
   });
 
   useEffect(() => {
-
-    let labelList = new Array(30).fill("").map((_item, ind) => {
+    const now = new Date();
+    // Using 0 as the day it will give us the last day of the prior month
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+    let labelList = new Array(daysInMonth).fill("").map((_item, ind) => {
       let date = new Date();
       date.setDate(ind + 1);
       return format(date, "dd MM");
     });
 
-    setData({
-      labels: labelList,
-      datasets: [
-        {
-          // database citishop
-          data: datasetData,
-          ...datasetOptions,
-        },
-      ],
-    });
+    fetch(new URL(`/api/Report/Analytics`, apiEndpoint).href)
+      .then(async response => {
+        let data: number[] = await response.json();
+        if (response.ok) {
+          setData({
+            labels: labelList,
+            datasets: [
+              {
+                // database citishop
+                data: data,
+                ...datasetOptions,
+              },
+            ],
+          });
+        }
+      }, (err) => {
+        console.error(err);
+      });
+
   }, []);
 
   return <Chart type="line" data={data} options={options} />;
 };
 
-const datasetData = [
-  10, 7, 4, 15, 12, 17, 13, 25, 22, 19,
-  55, 62, 69, 43, 59, 60, 75, 62, 75, 80,
-];
+// const datasetData = [
+//   10, 7, 4, 15, 12, 17, 13, 25, 22, 19,
+//   55, 62, 69, 43, 59, 60, 75, 62, 75, 80,
+// ];
 
 export default AdminAnalyticsChart;

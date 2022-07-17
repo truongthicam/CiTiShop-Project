@@ -16,6 +16,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const ProfileUser = () => {
+  const [infoLoading, setInfoLoading] = useState(true);
+  const [userInfoList, setUserInfoList] = useState<number[]>(undefined);
   const [loading, setLoading] = useState(true);
   const [buttonDisable, setButtonDisable] = useState(false);
   const [user, setUser] = useState<UserDto>(undefined);
@@ -52,6 +54,18 @@ const ProfileUser = () => {
         }, (err) => {
           console.error(err);
         })
+
+      fetch(new URL(`/api/Report/${id}`, apiEndpoint).href)
+        .then(async response => {
+          let data: number[] = await response.json();
+          if (response.ok) {
+            setUserInfoList(data);
+            setInfoLoading(false);
+          }
+        }, (err) => {
+          console.error(err);
+        });
+
     }
   }, [id]);
 
@@ -114,13 +128,13 @@ const ProfileUser = () => {
                     alignItems="center"
                   >
                     <div>
-                      <H5 my="0px">Trương Thị Cam</H5>
+                      <H5 my="0px">{user.fullName}</H5>
                       <FlexBox alignItems="center">
                         <Typography fontSize="14px" color="text.hint">
                           Tích lũy:
                         </Typography>
                         <Typography ml="4px" fontSize="14px" color="primary.main">
-                          200.000 VND
+                          {infoLoading ? '...' : userInfoList[4]} VND
                         </Typography>
                       </FlexBox>
                     </div>
@@ -139,7 +153,7 @@ const ProfileUser = () => {
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Grid container spacing={4}>
-                {infoList.map((item) => (
+                {infoLoading ? <Spinner /> : infoList.map((item, ind) => (
                   <Grid item lg={3} sm={6} xs={6} key={item.subtitle}>
                     <FlexBox
                       as={Card}
@@ -149,7 +163,7 @@ const ProfileUser = () => {
                       p="1rem 1.25rem"
                     >
                       <H3 color="primary.main" my="0px" fontWeight="600">
-                        {item.title}
+                        {userInfoList[ind]}
                       </H3>
                       <Small color="text.muted" textAlign="center">
                         {item.subtitle}

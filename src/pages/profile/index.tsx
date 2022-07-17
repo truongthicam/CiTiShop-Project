@@ -7,15 +7,20 @@ import Grid from "@component/grid/Grid";
 import Icon from "@component/icon/Icon";
 import DashboardLayout from "@component/layout/CustomerDashboardLayout";
 import DashboardPageHeader from "@component/layout/DashboardPageHeader";
+import Spinner from "@component/Spinner";
 import TableRow from "@component/TableRow";
 import Typography, { H3, H5, Small } from "@component/Typography";
 import { UserDto } from "@utils/apiTypes";
+import { apiEndpoint } from "@utils/constants";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const Profile = () => {
+  const [infoLoading, setInfoLoading] = useState(true);
+  const [userInfoList, setUserInfoList] = useState<number[]>(undefined);
+  // const [imageSrc, setImageSrc] = useState("");
   const [user, setUser] = useState<UserDto>(undefined);
   const router = useRouter();
 
@@ -25,7 +30,29 @@ const Profile = () => {
     if (!userJson) {
       router.replace("/403");
     } else {
-      setUser(JSON.parse(userJson));
+      let userDto: UserDto = JSON.parse(userJson);
+      setUser(userDto);
+
+      fetch(new URL(`/api/Report/${userDto.email}`, apiEndpoint).href)
+        .then(async response => {
+          let data: number[] = await response.json();
+          if (response.ok) {
+            setUserInfoList(data);
+            setInfoLoading(false);
+          }
+        }, (err) => {
+          console.error(err);
+        });
+
+      // fetch(new URL(`/api/Image/${userDto.email}`, apiEndpoint).href)
+      //   .then(async response => {
+      //     let data: string = await response.json();
+      //     if (response.ok && !data.endsWith('/')) {
+      //       setImageSrc(data);
+      //     }
+      //   }, (err) => {
+      //     console.error(err);
+      //   });
     }
   }, [])
 
@@ -53,7 +80,7 @@ const Profile = () => {
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12}>
             <FlexBox as={Card} p="14px 32px" height="100%" alignItems="center">
-              <Avatar src="" size={64} />
+              <Avatar src={""} size={64} />
               <Box ml="12px" flex="1 1 0">
                 <FlexBox
                   flexWrap="wrap"
@@ -67,7 +94,7 @@ const Profile = () => {
                         Tích lũy:
                       </Typography>
                       <Typography ml="4px" fontSize="14px" color="primary.main">
-                        200.000 VND
+                        {infoLoading ? '...' : userInfoList[4]} VND
                       </Typography>
                     </FlexBox>
                   </div>
@@ -87,7 +114,7 @@ const Profile = () => {
           <Grid item lg={6} md={6} sm={12} xs={12}>
             <Grid container spacing={4}>
               {/* TODO: Replace with API */}
-              {infoList.map((item) => (
+              {infoLoading ? <Spinner /> : infoList.map((item, ind) => (
                 <Grid item lg={3} sm={6} xs={6} key={item.subtitle}>
                   <FlexBox
                     as={Card}
@@ -97,7 +124,7 @@ const Profile = () => {
                     p="1rem 1.25rem"
                   >
                     <H3 color="primary.main" my="0px" fontWeight="600">
-                      {item.title}
+                      {userInfoList[ind]}
                     </H3>
                     <Small color="text.muted" textAlign="center">
                       {item.subtitle}
